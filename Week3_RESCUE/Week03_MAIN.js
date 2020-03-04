@@ -115,6 +115,8 @@ function main() {
   // size settings from our HTML file; fill browser window with canvas whose 
   // width is twice its height.)
   
+  initGUI();
+  
   drawAll();
   //---------OPTIONAL: do all the things done by 't' key; make our initial
   // ray-traced image automatically:

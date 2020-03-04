@@ -320,6 +320,42 @@ var posV = this.iBot  + ypos*this.vfrac;	// V coord,
 
 }
 
+CCamera.prototype.setJitteredSSEyeRay = function(myeRay, xpos, ypos, xfrac, yfrac, fracScaler) {
+//=============================================================================
+// Anti-aliasing
+
+// Convert image-plane location (xpos,ypos) in the camera's U,V,N coords:
+
+  if (settings.Jitter){
+    var rndx = Math.random();
+    var rndy = Math.random();
+  }
+  else{
+    var rndx = 0;
+    var rndy = 0;
+  }
+
+
+  var posU = this.iLeft + (xpos + (xfrac + rndx) * fracScaler) * this.ufrac;  // U coord,
+  var posV = this.iBot  + (ypos + (yfrac + rndy) * fracScaler) * this.vfrac;  // V coord,
+  //  and the N coord is always -1, at the image-plane (zNear) position.
+  // Then convert this point location to world-space X,Y,Z coords using our 
+  // camera's unit-length coordinate axes uAxis,vAxis,nAxis
+  xyzPos = vec4.create();    // make vector 0,0,0,0. 
+  vec4.scaleAndAdd(xyzPos, xyzPos, this.uAxis, posU); // xyzPos += Uaxis*posU;
+  vec4.scaleAndAdd(xyzPos, xyzPos, this.vAxis, posV); // xyzPos += Vaxis*posU;
+  vec4.scaleAndAdd(xyzPos, xyzPos, this.nAxis, -this.iNear); 
+  //                                                xyzPos += Naxis * (-1)
+  // The eyeRay we want consists of just 2 world-space values:
+  //    -- the ray origin == camera origin == eyePt in XYZ coords
+  //    -- the ray direction TO image-plane point FROM ray origin;
+  //        myeRay.dir = (xyzPos + eyePt) - eyePt = xyzPos; thus
+  vec4.copy(myeRay.orig, this.eyePt); 
+  vec4.copy(myeRay.dir, xyzPos);
+//  console.log('in CCamera.makeEyeRay(): this.eyePt:', this.eyePt);
+
+}
+
 CCamera.prototype.printMe = function() {
 //==============================================================================
 // print CCamera object's current contents in console window:
