@@ -74,7 +74,8 @@ function CGeom(shapeSelect) {
 	  case RT_SPHERE: //----------------------------------------------------------
 	    //set the ray-tracing function (so we call it using item[i].traceMe() )
 	    this.traceMe = function(inR,hit) { this.traceSphere(inR,hit); }; 
-    	this.lineColor = vec4.fromValues(0.0,0.3,1.0,1.0);  // RGBA blue(A==opacity)
+    	this.lineColor = vec4.fromValues(0.05, 0.05, 0.05, 1.0);  // RGBA black(A==opacity)
+      this.gapColor = vec4.fromValues(0.95, 0.95, 0.95,1.0);  // RGBA white(A==opacity)
 	    break;
 	  case RT_BOX:    //----------------------------------------------------------
 	    //set the ray-tracing function (so we call it using item[i].traceMe() )
@@ -524,6 +525,8 @@ CGeom.prototype.traceSphere = function(inRay, myHit) {
   // Update myHit to describe it------------------------------------------------
   myHit.t0 = t0hit;          // record ray-length, and
   myHit.hitGeom = this;      // record this CGeom object as the one we hit, and
+
+
   // Compute the x,y,z,w point where rayT hit the sphere in MODEL coords:
                   // vec4.scaleAndAdd(out,a,b,scalar) sets out = a + b*scalar
   vec4.scaleAndAdd(myHit.modelHitPt, rayT.orig, rayT.dir, myHit.t0); 
@@ -534,13 +537,20 @@ CGeom.prototype.traceSphere = function(inRay, myHit) {
   // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
   // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
   vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
+
+
   // Now find surface normal: 
-  // in model space we know it's always +z,
   // but we need to TRANSFORM the normal to world-space, & re-normalize it.
-  vec4.transformMat4(myHit.surfNorm, vec4.fromValues(0,0,1,0), this.normal2world);
+  vec4.transformMat4(myHit.surfNorm, myHit.modelHitPt, this.normal2world);
   vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+
+
   // TEMPORARY: sphere color-setting
-  myHit.hitNum = 1;   // in CScene.makeRayTracedImage, use 'this.gapColor'
+
+  if (myHit.surfNorm[2] > 0)
+    myHit.hitNum = 1;   // in CScene.makeRayTracedImage, use 'this.gapColor'
+  else
+    myHit.hitNum = 0; 
  
    // DIAGNOSTIC:---------------------------------------------------------------
   if(g_myScene.pixFlag ==1) {   // did we reach the one 'flagged' pixel
