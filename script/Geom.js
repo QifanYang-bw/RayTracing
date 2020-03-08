@@ -129,11 +129,12 @@ function CGeom(shapeSelect) {
 
 }
 
-CGeom.prototype.setMaterial = function (mat) {
+CGeom.prototype.setMaterial = function (matID) {
 //==============================================================================
 // Set up material for CGeom, replacing gapColor and lineColor
 
-    this.mat = mat;
+    this.mat = new CMaterial(matID);
+    console.log('Set material to ' + matID);
 }
 
 CGeom.prototype.setIdent = function () {
