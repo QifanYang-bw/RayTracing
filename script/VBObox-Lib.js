@@ -83,11 +83,11 @@ As each 'VBObox' object can contain:
 
 //=============================================================================
 //=============================================================================
-function VBObox0() {  // (JUST ONE instance: as 'preView' var 
+function VboBoxPrev() {  // (JUST ONE instance: as 'preView' var 
     // that shows webGL preview of ray-traced scene)
 //=============================================================================
 //=============================================================================
-// CONSTRUCTOR for one re-usable 'VBObox0' object that holds all data and fcns
+// CONSTRUCTOR for one re-usable 'VboBoxPrev' object that holds all data and fcns
 // needed to render vertices from one Vertex Buffer Object (VBO) using one 
 // separate shader program (a vertex-shader & fragment-shader pair) and one
 // set of 'uniform' variables.
@@ -174,7 +174,7 @@ function VBObox0() {  // (JUST ONE instance: as 'preView' var
     console.assert((this.vboFcount_a_Position +     // check the size of each and
         this.vboFcount_a_Color) *   // every attribute in our VBO
         this.FSIZE == this.vboStride, // for agreeement with'stride'
-        "Uh oh! VBObox0.vboStride disagrees with attribute-size values!");
+        "Uh oh! VboBoxPrev.vboStride disagrees with attribute-size values!");
     /* // DIAGNOSTIC:
     console.log("vboStride in constructor: ", this.vboStride);
     console.log("FSIZE:    ", this.FSIZE);
@@ -213,7 +213,7 @@ function VBObox0() {  // (JUST ONE instance: as 'preView' var
     */
 }
 
-VBObox0.prototype.appendWireGroundGrid = function () {
+VboBoxPrev.prototype.appendWireGroundGrid = function () {
 //==============================================================================
 // Create a set of vertices for an x,y grid of colored lines in the z=0 plane
 // centered at x=y=z=0, and store them in local array vertSet[].  
@@ -236,7 +236,7 @@ VBObox0.prototype.appendWireGroundGrid = function () {
     var vertsPerLine = 8;      // # vertices stored in vertSet[] for each line;
 
     //Set vertex contents:----------------------------------------
-    /*  ALREADY SET in VBObox0 constructor
+    /*  ALREADY SET in VboBoxPrev constructor
     //	this.floatsPerVertex = 8;  // x,y,z,w; r,g,b,a; 
                                  // later add nx,ny,nz; tx,ty,tz, matl, usr; values.
     */
@@ -305,7 +305,7 @@ VBObox0.prototype.appendWireGroundGrid = function () {
                     yNow = this.xyMax;
                     break;  // end of 4th line-segment.
                 default:
-                    console.log("VBObox0.appendWireGroundGrid() !ERROR! **X** line out-of-bounds!!\n\n");
+                    console.log("VboBoxPrev.appendWireGroundGrid() !ERROR! **X** line out-of-bounds!!\n\n");
                     break;
             } // set all values for this vertex:
             vertSet[idx] = xNow;            // x value
@@ -347,7 +347,7 @@ VBObox0.prototype.appendWireGroundGrid = function () {
                     xNow = this.xyMax;
                     break;  // end of 4th line-segment.
                 default:
-                    console.log("VBObox0.appendWireGroundGrid() !ERROR! **Y** line out-of-bounds!!\n\n");
+                    console.log("VboBoxPrev.appendWireGroundGrid() !ERROR! **Y** line out-of-bounds!!\n\n");
                     break;
             } // Set all values for this vertex:
             vertSet[idx] = xNow;            // x value
@@ -378,7 +378,7 @@ VBObox0.prototype.appendWireGroundGrid = function () {
     this.vboContents = tmp;           // REPLACE old vboContents with tmp
 }
 
-VBObox0.prototype.appendDisk = function (rad) {
+VboBoxPrev.prototype.appendDisk = function (rad) {
 //==============================================================================
 // Create a set of vertices to draw a grid of colored lines that form a disk of
 // radius 'rad' in the xy plane centered at world-space origin (x=y=z=0)
@@ -387,6 +387,7 @@ VBObox0.prototype.appendDisk = function (rad) {
 // Append the contents of vertSet[] to existing contents of the this.vboContents 
 // array; update this.vboVerts to include these new verts for drawing.
 // NOTE: use gl.drawArrays(gl.GL_LINES,...) to draw these vertices.
+    
     if (rad == undefined) rad = 3;   // default value.
     //Set # of lines in grid--------------------------------------
     this.xyMax = rad;    // grid size; extends to cover +/-xyMax in x and y.
@@ -395,10 +396,7 @@ VBObox0.prototype.appendDisk = function (rad) {
                                   // xCount, yCount MUST be >1, and should be odd.
                                   // (why odd#? so that we get lines on the x,y axis)
     var vertsPerLine = 2;    // # vertices stored in vertSet[] for each line;
-    //Set vertex contents:----------------------------------------
-    /*  ALREADY SET in VBObox0 constructor
-        this.floatsPerVertex = 8;  // x,y,z,w;  r,g,b,a values.
-    */
+    
     //Create (local) vertSet[] array-----------------------------
     var vertCount = (this.xCount + this.yCount) * vertsPerLine;
     var vertSet = new Float32Array(vertCount * this.floatsPerVertex);
@@ -476,7 +474,7 @@ VBObox0.prototype.appendDisk = function (rad) {
 }
 
 // make our own local fcn to convert polar to rectangular coords:
-VBObox0.prototype.polar2xyz = function (out4, fracEW, fracNS) {
+VboBoxPrev.prototype.polar2xyz = function (out4, fracEW, fracNS) {
 //------------------------------------------------------------------------------
 // Set the vec4 argument 'out4' to the 3D point on the unit sphere described by 
 // normalized longitude and lattitude angles: 0 <= fracEW, fracNS <= 1.
@@ -497,7 +495,7 @@ VBObox0.prototype.polar2xyz = function (out4, fracEW, fracNS) {
         cNS, 1.0);      // z =        cos(NS); w=1.0  (point, not vec)
 }
 
-VBObox0.prototype.appendWireSphere = function (NScount) {
+VboBoxPrev.prototype.appendWireSphere = function (NScount) {
 //==============================================================================
 // Create a set of vertices to draw grid of colored lines that form a 
 // sphere of radius 1, centered at x=y=z=0, when drawn with LINE_STRIP primitive
@@ -511,10 +509,10 @@ VBObox0.prototype.appendWireSphere = function (NScount) {
     if (NScount == undefined) NScount = 13;    // default value.
     if (NScount < 3) NScount = 3;              // enforce minimums
     EWcount = 2 * (NScount);
-    console.log("VBObox0.appendLineSphere() EWcount, NScount:", EWcount, ", ", NScount);
+    console.log("VboBoxPrev.appendLineSphere() EWcount, NScount:", EWcount, ", ", NScount);
 
     //Set vertex contents:----------------------------------------
-    /*  ALREADY SET in VBObox0 constructor
+    /*  ALREADY SET in VboBoxPrev constructor
         this.floatsPerVertex = 8;  // x,y,z,w;  r,g,b,a values.
     */
 
@@ -526,7 +524,7 @@ VBObox0.prototype.appendWireSphere = function (NScount) {
     //    forms a circle of constant z (NSfrac determines the z value), and
     // --the EWcount arcs of NScount vertices each, where each arc 
     //    forms a half-circle from south-pole to north-pole at constant EWfrac
-//console.log("VBObox0.appendLineSphere() vertCount, floatsPerVertex:", vertCount, ", ", this.floatsPerVertex);
+//console.log("VboBoxPrev.appendLineSphere() vertCount, floatsPerVertex:", vertCount, ", ", this.floatsPerVertex);
 
     // Set Vertex Colors--------------------------------------
     // The sphere consists of horizontal rings and vertical half-circle arcs.
@@ -633,7 +631,7 @@ VBObox0.prototype.appendWireSphere = function (NScount) {
 
 }
 
-VBObox0.prototype.appendLineCube = function () {
+VboBoxPrev.prototype.appendLineCube = function () {
 //==============================================================================
 // Create a set of vertices to draw grid of colored lines that form a unit
 // cube,  centered at x=y=z=0, (vertices at +/- 1 coordinates)
@@ -648,10 +646,10 @@ VBObox0.prototype.appendLineCube = function () {
 //
 }
 
-VBObox0.prototype.init = function () {
+VboBoxPrev.prototype.init = function () {
 //==============================================================================
 // Prepare the GPU to use all vertices, GLSL shaders, attributes, & uniforms 
-// already created in this VBObox by its constructor function VBObox0();
+// already created in this VBObox by its constructor function VboBoxPrev();
 // NOTE: The init() function is usually called only once, within main())
 // Specifically:
 // a) Create, compile, link our GLSL vertex- and fragment-shaders to form an 
@@ -711,7 +709,7 @@ VBObox0.prototype.init = function () {
 
     // c) Make/Load Texture Maps & Samplers:------------------------------------------
     //  NONE.
-    // see VBObox1.prototype.init = function(myGL) below for a working example)
+    // see VboBoxTrace.prototype.init = function(myGL) below for a working example)
 
     // d1) Find All Attributes:---------------------------------------------------
     //  Find & save the GPU location of all our shaders' attribute-variables and 
@@ -739,7 +737,7 @@ VBObox0.prototype.init = function () {
     }
 }
 
-VBObox0.prototype.switchToMe = function () {
+VboBoxPrev.prototype.switchToMe = function () {
 //==============================================================================
 // Set GPU to use this VBObox's contents (VBO, shader, attributes, uniforms...)
 //
@@ -795,7 +793,7 @@ VBObox0.prototype.switchToMe = function () {
     gl.enableVertexAttribArray(this.a_ColorLoc);
 }
 
-VBObox0.prototype.isReady = function () {
+VboBoxPrev.prototype.isReady = function () {
 //==============================================================================
 // Returns 'true' if our WebGL rendering context ('gl') is ready to render using
 // this objects VBO and shader program; else return false.
@@ -816,7 +814,7 @@ VBObox0.prototype.isReady = function () {
     return isOK;
 }
 
-VBObox0.prototype.adjust = function () {
+VboBoxPrev.prototype.adjust = function () {
 //==============================================================================
 // Update the GPU to newer, current values we now store for 'uniform' vars on 
 // the GPU; and (if needed) update each attribute's stride and offset in VBO.
@@ -851,7 +849,7 @@ VBObox0.prototype.adjust = function () {
     // mvpMat now set for WORLD drawing axes. 
     // If you want to draw in various 'model' coord systems you'll need to make
     // further modifications of the mvpMat matrix and u_mvpMat uniform in the
-    // VBObox0.draw() function below.
+    // VboBoxPrev.draw() function below.
 
     //  Transfer new uniforms' values to the GPU:-------------
     // Send  new 'ModelMat' values to the GPU's 'u_ModelMat1' uniform: 
@@ -864,7 +862,7 @@ VBObox0.prototype.adjust = function () {
 
 }
 
-VBObox0.prototype.draw = function () {
+VboBoxPrev.prototype.draw = function () {
 //=============================================================================
 // Render current VBObox contents.
 
@@ -875,7 +873,7 @@ VBObox0.prototype.draw = function () {
     }
     // ----------------------------Draw the contents of the currently-bound VBO:
     // SPLIT UP the drawing into separate shapes, as each needs different
-    // transforms in its mvpMatrix uniform.  VBObox0.adjust() already set value
+    // transforms in its mvpMatrix uniform.  VboBoxPrev.adjust() already set value
     // to the GPU's uniform u_mvpMat for drawing in world coords, so we're ready
     // to draw the ground-plane grid (first vertex at this.bgnGrid)
 
@@ -915,6 +913,8 @@ VBObox0.prototype.draw = function () {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnDisk, 	// location of 1st vertex to draw;
         this.bgnSphere - this.bgnDisk);  // How many vertices to draw
+    
+    
     // 2) -----------------copy transforms for Disk 2 in CScene.initScene(0) :
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
     mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(-1.0, 1.0, 1.3));
@@ -947,7 +947,7 @@ VBObox0.prototype.draw = function () {
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)  
 }
 
-VBObox0.prototype.reload = function () {
+VboBoxPrev.prototype.reload = function () {
 //=============================================================================
 // Over-write current values in the GPU inside our already-created VBO: use 
 // gl.bufferSubData() call to re-transfer some or all of our Float32Array 
@@ -960,7 +960,7 @@ VBObox0.prototype.reload = function () {
 
 }
 /*
-VBObox0.prototype.empty = function() {
+VboBoxPrev.prototype.empty = function() {
 //=============================================================================
 // Remove/release all GPU resources used by this VBObox object, including any 
 // shader programs, attributes, uniforms, textures, samplers or other claims on 
@@ -975,7 +975,7 @@ VBObox0.prototype.empty = function() {
 //
 }
 
-VBObox0.prototype.restore = function() {
+VboBoxPrev.prototype.restore = function() {
 //=============================================================================
 // Replace/restore all GPU resources used by this VBObox object, including any 
 // shader programs, attributes, uniforms, textures, samplers or other claims on 
@@ -992,11 +992,11 @@ VBObox0.prototype.restore = function() {
 
 //=============================================================================
 //=============================================================================
-function VBObox1() { // (JUST ONE instance: as 'rayView' var 
+function VboBoxTrace() { // (JUST ONE instance: as 'rayView' var 
     // that shows ray-traced image-on-screen as a texture map
 //=============================================================================
 //=============================================================================
-// CONSTRUCTOR for one re-usable 'VBObox1' object that holds all data and fcns
+// CONSTRUCTOR for one re-usable 'VboBoxTrace' object that holds all data and fcns
 // needed to render vertices from one Vertex Buffer Object (VBO) using one 
 // separate shader program (a vertex-shader & fragment-shader pair) and one
 // set of 'uniform' variables.
@@ -1058,7 +1058,7 @@ function VBObox1() { // (JUST ONE instance: as 'rayView' var
     console.assert((this.vboFcount_a_Position +     // check the size of each and
         this.vboFcount_a_TexCoord) *   // every attribute in our VBO
         this.FSIZE == this.vboStride, // for agreeement with'stride'
-        "Uh oh! VBObox1.vboStride disagrees with attribute-size values!");
+        "Uh oh! VboBoxTrace.vboStride disagrees with attribute-size values!");
 
     //----------------------Attribute offsets
     this.vboOffset_a_Position = 0;  //# of bytes from START of vbo to the START
@@ -1087,7 +1087,7 @@ function VBObox1() { // (JUST ONE instance: as 'rayView' var
     this.u_SamplerLoc;            // GPU location for texture sampler
 };
 
-VBObox1.prototype.init = function () {
+VboBoxTrace.prototype.init = function () {
 //==============================================================================
 // Prepare the GPU to use all vertices, GLSL shaders, attributes, & uniforms 
 // kept in this VBObox. (This function usually called only once, within main()).
@@ -1215,7 +1215,7 @@ VBObox1.prototype.init = function () {
     */
 }
 
-VBObox1.prototype.switchToMe = function () {
+VboBoxTrace.prototype.switchToMe = function () {
 //==============================================================================
 // Set GPU to use this VBObox's contents (VBO, shader, attributes, uniforms...)
 //
@@ -1270,7 +1270,7 @@ VBObox1.prototype.switchToMe = function () {
     gl.enableVertexAttribArray(this.a_TexCoordLoc);
 }
 
-VBObox1.prototype.isReady = function () {
+VboBoxTrace.prototype.isReady = function () {
 //==============================================================================
 // Returns 'true' if our WebGL rendering context ('gl') is ready to render using
 // this objects VBO and shader program; else return false.
@@ -1291,7 +1291,7 @@ VBObox1.prototype.isReady = function () {
     return isOK;
 }
 
-VBObox1.prototype.adjust = function () {
+VboBoxTrace.prototype.adjust = function () {
 //==============================================================================
 // Update the GPU to newer, current values we now store for 'uniform' vars on 
 // the GPU; and (if needed) update each attribute's stride and offset in VBO.
@@ -1313,7 +1313,7 @@ VBObox1.prototype.adjust = function () {
     */
 }
 
-VBObox1.prototype.draw = function () {
+VboBoxTrace.prototype.draw = function () {
 //=============================================================================
 // Send commands to GPU to select and render current VBObox contents.
 
@@ -1332,7 +1332,7 @@ VBObox1.prototype.draw = function () {
 }
 
 
-VBObox1.prototype.reload = function () {
+VboBoxTrace.prototype.reload = function () {
 //=============================================================================
 // Over-write current values in the GPU for our already-created VBO: use 
 // gl.bufferSubData() call to re-transfer some or all of our Float32Array 
@@ -1365,7 +1365,7 @@ VBObox1.prototype.reload = function () {
 
 
 /*
-VBObox1.prototype.empty = function() {
+VboBoxTrace.prototype.empty = function() {
 //=============================================================================
 // Remove/release all GPU resources used by this VBObox object, including any 
 // shader programs, attributes, uniforms, textures, samplers or other claims on 
@@ -1380,7 +1380,7 @@ VBObox1.prototype.empty = function() {
 //
 }
 
-VBObox1.prototype.restore = function() {
+VboBoxTrace.prototype.restore = function() {
 //=============================================================================
 // Replace/restore all GPU resources used by this VBObox object, including any 
 // shader programs, attributes, uniforms, textures, samplers or other claims on 

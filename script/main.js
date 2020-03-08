@@ -25,7 +25,7 @@
 //               (convert by rounding: intRGB = floatRGB*255.5)
 //	--include re-sizing so that HTML-5 canvas always fits browser-window width
 //							(see 351-1 starter code: 7.11.JT_HelloCube_Resize.js, .html)
-//	--revise to use VBObox0,VBObox1 objects; each holds one VBO & 1 shader pgm,
+//	--revise to use VboBoxPrev,VboBoxTrace objects; each holds one VBO & 1 shader pgm,
 //			so that changes to code for WebGL preview in the left viewport won't 
 //			affect code for the right viewport that displays ray-traced result by 
 //			texture-mapping.
@@ -51,8 +51,8 @@ var gui = new GUIbox(); // Holds all (Graphical) User Interface fcns & vars, for
                         // gui.camFovy, gui.camAspect, gui.camNear
                         // gui.camEyePt, gui.camAimPt, gui.camUpVec    
 //-----For the VBOs & Shaders:-----------------
-preView = new VBObox0();		// For WebGLpreview: holds one VBO and its shaders
-rayView = new VBObox1();		// for displaying the ray-tracing results.
+preView = new VboBoxScene1();		// For WebGLpreview: holds one VBO and its shaders
+rayView = new VboBoxTrace();		// for displaying the ray-tracing results.
 
 //-----------Ray Tracer Objects:---------------
 var g_myPic = new CImgBuf(512, 512); // Create a floating-point image-buffer 
@@ -106,7 +106,9 @@ function main() {
 
     gui.init();                   // Register all Mouse & Keyboard Event-handlers
                                   // (see JT_GUIbox-Lib.js )
+    
     g_myScene.initScene(1);       // initialize our ray-tracer (to default scene)
+    
     // Initialize each of our 'vboBox' objects: 
     preView.init(gl);		// VBO + shaders + uniforms + attribs for WebGL preview
     rayView.init(gl);		//  "		"		" to display ray-traced on-screen result.

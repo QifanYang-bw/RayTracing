@@ -120,6 +120,7 @@ function CHit() {
                                   //(example; transparency rays begin INSIDE).
 
     this.modelHitPt = vec4.create(); // the 'hit point' in model coordinates.
+    
     // *WHY* have modelHitPt? to evaluate procedural textures & materials.
     //      Remember, we define each CGeom objects as simply as possible in its
     // own 'model' coordinate system (e.g. fixed, unit size, axis-aligned, and
@@ -137,7 +138,10 @@ function CHit() {
     // object as we move it around in world-space (by changing worldRay2Model
     // matrix), and the object's surface patterns won't change if we 'squeeze' 
     // or 'stretch' it by non-uniform scaling.
-    this.colr = vec4.clone(g_myScene.skyColor);   // set default as 'sky'
+    
+    // this.colr = vec4.clone(g_myScene.skyColor);   // set default as 'sky'
+    // no longer used here, for now
+    
     // The final color we computed for this point,
     // (note-- not used for shadow rays).
     // (uses RGBA. A==opacity, default A=1=opaque.
@@ -297,8 +301,6 @@ CScene.prototype.initScene = function (num) {
     this.setImgBuf(g_myPic);    // rendering target: our global CImgBuf object
                                 // declared just above main().
 
-    // Set default sky color:
-    this.skyColor = vec4.fromValues(0.788, 0.914, 0.965, 1.0);  // cyan/bright blue
 
 
     // Empty the 'item[] array -- discard all leftover CGeom objects it may hold.
@@ -309,6 +311,9 @@ CScene.prototype.initScene = function (num) {
     switch (num) {
         case 0:     // (default scene number; must create a 3D scene for ray-tracing
                     // create our list of CGeom shapes that fill our 3D scene:
+            
+            // Set default sky color:
+            this.skyColor = vec4.fromValues(0.788, 0.914, 0.965, 1.0);  // cyan/bright blue
             
                     //---Ground Plane-----
                     // draw this in world-space; no transforms!
@@ -327,7 +332,7 @@ CScene.prototype.initScene = function (num) {
 
             // Now apply transforms to set disk's size, orientation, & position.
             // (Be sure to do these same transforms in WebGL preview; find them in the
-            //  JT_VBObox-lib.js file, in VBObox0.draw() function)
+            //  JT_VBObox-lib.js file, in VboBoxPrev.draw() function)
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(1, 1, 1.3);        // move drawing axes 
                                                             // RIGHT, BACK, & UP.
@@ -344,7 +349,7 @@ CScene.prototype.initScene = function (num) {
 
             // Now apply transforms to set disk's size, orientation, & position.
             // (Be sure to do these same transforms in WebGL preview; find them in the
-            //  JT_VBObox-lib.js file, in VBObox0.draw() function)
+            //  JT_VBObox-lib.js file, in VboBoxPrev.draw() function)
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(-1, 1, 1.3);         // move drawing axes 
                                                               // LEFT, BACK, & UP.
@@ -363,13 +368,39 @@ CScene.prototype.initScene = function (num) {
 
             break;
         case 1:
-            //
-            //
-            // another: SCENE 1 SETUP   
-            console.log("JT_tracer0-Scene file: CScene.initScene(", num, ") NOT YET IMPLEMENTED.");
-            this.initScene(0); // use default scene
-            //
-            //
+            // Set default sky color:
+            this.skyColor = vec4.fromValues(0.6, 0.6, 0.6, 1.0);  // cyan/bright blue
+            
+            //---Ground Plane-----
+            // draw this in world-space; no transforms!
+            this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
+            iNow = this.item.length - 1;               // get its array index.
+                                                       // use default colors.
+                                                       // no transforms needed.
+            vec4.set(this.item[iNow].gapColor, 0.05, 0.05, 0.05, 1.0); // 
+            vec4.set(this.item[iNow].lineColor, 0.95, 0.95, 0.95, 1.0);  // 
+
+            //-----Sphere 1-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+
+            
+            //-----Sphere 2-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(0, 1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+            
             break;
         case 2:
             //

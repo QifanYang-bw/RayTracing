@@ -17,6 +17,8 @@ function CRay() {
     // (default: at origin
     this.dir = vec4.fromValues(0, 0, -1, 0);			// The ray's direction vector 
     // (default: look down -z axis)
+    
+    this.isShadowRay = false;
 }
 
 CRay.prototype.printMe = function (name) {

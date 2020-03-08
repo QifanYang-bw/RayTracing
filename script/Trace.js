@@ -39,48 +39,53 @@ CScene.prototype.findShade = function (hit) {
         
         for (var i = 0; i < globalLightList.length; i++) {
             
+            // Check whether the light source is covered
+            
+            // var lightRay = new CRay();   
+            // vec4.copy(lightRay.orig, hit.hitPt);   // memory-to-memory copy. 
+            // vec4.copy(lightRay.dir, );
+            
             lamp = globalLightList[i];
             
-            var t4 = vec4.create();
-            var t = vec3.create();
-            var C2 = vec3.create();
+            var t = vec4.create();
+            var C2 = vec4.create();
             
-            var lightDirection = vec3.create();
-            var eyeDirection = vec3.create();
-            var reflectDirection = vec3.create();
+            var lightDirection = vec4.create();
+            var eyeDirection = vec4.create();
+            var reflectDirection = vec4.create();
     
-            vec3.sub(t, lamp.pos, hit.hitPt);
-            vec3.normalize(lightDirection, t);
+            vec4.sub(t, lamp.pos, hit.hitPt);
+            vec4.normalize(lightDirection, t);
     
-            vec3.copy(eyeDirection, hit.viewN);
+            vec4.copy(eyeDirection, hit.viewN);
             // already normalized
     
-            var nDotL = Math.max(vec3.dot(lightDirection, hit.surfNorm), 0);
+            var nDotL = Math.max(vec4.dot(lightDirection, hit.surfNorm), 0);
             
-            C2 = vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
-            vec3.sub(reflectDirection, C2, lightDirection);
+            C2 = vec4.scale(C2, hit.surfNorm, vec4.dot(lightDirection, hit.surfNorm) * 2);
+            vec4.sub(reflectDirection, C2, lightDirection);
             
-            var RdotV = Math.max(vec3.dot(reflectDirection, eyeDirection), 0);
+            var RdotV = Math.max(vec4.dot(reflectDirection, eyeDirection), 0);
             var e64 = Math.pow(RdotV, hit.hitGeom.mat.shiny);
             
-            vec3.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
-            vec3.add(ambient, ambient, t);
+            vec4.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
+            vec4.add(ambient, ambient, t);
             
-            vec3.mul(t, hit.hitGeom.mat.diff, lamp.diff);
-            vec3.scaleAndAdd(diffuse, diffuse, t, nDotL);
+            vec4.mul(t, hit.hitGeom.mat.diff, lamp.diff);
+            vec4.scaleAndAdd(diffuse, diffuse, t, nDotL);
             
-            vec3.mul(t, hit.hitGeom.mat.spec, lamp.spec);
-            vec3.scaleAndAdd(specular, specular, t, e64);
+            vec4.mul(t, hit.hitGeom.mat.spec, lamp.spec);
+            vec4.scaleAndAdd(specular, specular, t, e64);
             
         }
         
-        vec3.add(color3d, color3d, ambient);
-        vec3.add(color3d, color3d, diffuse);
-        vec3.add(color3d, color3d, specular);
-        
         vec4.copy(color, hit.hitGeom.mat.emit);
-        vec4.set(t4, color3d[0], color3d[1], color3d[2], 0);
-        vec4.add(color, color, t4);
+        vec4.add(color, color, ambient);
+        vec4.add(color, color, diffuse);
+        vec4.add(color, color, specular);
+        
+        // vec4.set(t4, color3d[0], color3d[1], color3d[2], 0);
+        // vec4.add(color, color, t4);
     }
     else {
         // No material, use default

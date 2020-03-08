@@ -523,8 +523,6 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
         return;         // DON'T change myHit, don't do any further calcs. Bye!
         // MISSED!
     }
-    //     ***IF*** you're tracing a shadow ray you can stop right here: we know
-    // that this ray's path to the light-source is blocked by this CGeom object.
 
     // STEP 4: Measure 2nd triangle-----------------------------------------------
     // Still here? then LM2 must be <= 1.0; the ray hits the sphere at 2 points 
@@ -576,8 +574,14 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     // Update myHit to describe it------------------------------------------------
     myHit.t0 = t0hit;          // record ray-length, and
     myHit.hitGeom = this;      // record this CGeom object as the one we hit, and
-
-
+    
+    //     ***IF*** you're tracing a shadow ray you can stop right here: we know
+    // that this ray's path to the light-source is blocked by this CGeom object.
+    
+    if (inRay.isShadowRay) {
+        return;
+    }
+    
     // Compute the x,y,z,w point where rayT hit the sphere in MODEL coords:
     // vec4.scaleAndAdd(out,a,b,scalar) sets out = a + b*scalar
     vec4.scaleAndAdd(myHit.modelHitPt, rayT.orig, rayT.dir, myHit.t0);
@@ -594,8 +598,7 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     // but we need to TRANSFORM the normal to world-space, & re-normalize it.
     vec4.transformMat4(myHit.surfNorm, myHit.modelHitPt, this.normal2world);
     vec4.normalize(myHit.surfNorm, myHit.surfNorm);
-
-
+    
     // TEMPORARY: sphere color-setting
 
     if (myHit.surfNorm[2] > 0)
