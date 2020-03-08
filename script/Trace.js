@@ -22,11 +22,6 @@ CScene.prototype.findShade = function (hit) {
 
     var color = vec4.create(); // floating-point RGBA color value
 
-    var lamp = new CLight();
-    vec4.set(lamp.pos, 0, 0, 10, 1);
-    vec3.set(lamp.ambi, 0.4, 0.4, 0.4);
-    vec3.set(lamp.diff, 1, 1, 1);
-    vec3.set(lamp.spec, 1, 1, 1);
 
     // Find eyeRay color from hit----------------------------------------
     if (hit.hitGeom.mat != null) {
@@ -35,42 +30,49 @@ CScene.prototype.findShade = function (hit) {
         // Phong Shader
         
         var color3d = vec3.create(); // floating-point RGBA color value
-        vec3.set(color3d, 0, 0, 0); // floating-point RGBA color value
         
-        var ambient = vec3.fromValues(0, 0, 0);
-        var diffuse = vec3.fromValues(0, 0, 0);
-        var specular = vec3.fromValues(0, 0, 0);
-
-        var t4 = vec4.create();
-        var t = vec3.create();
-        var C2 = vec3.create();
+        var ambient = vec3.create();
+        var diffuse = vec3.create();
+        var specular = vec3.create();
         
-        var lightDirection = vec3.create();
-        var eyeDirection = vec3.create();
-        var reflectDirection = vec3.create();
-
-        vec3.sub(t, lamp.pos, hit.hitPt);
-        vec3.normalize(lightDirection, t);
-
-        vec3.copy(eyeDirection, hit.viewN);
-        // already normalized
-
-        var nDotL = Math.max(vec3.dot(lightDirection, hit.surfNorm), 0);
+        var lamp;
         
-        C2 = vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
-        vec3.sub(reflectDirection, C2, lightDirection);
-        
-        var RdotV = Math.max(vec3.dot(reflectDirection, eyeDirection), 0);
-        var e64 = Math.pow(RdotV, hit.hitGeom.mat.shiny);
-        
-        vec3.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
-        vec3.add(ambient, ambient, t);
-        
-        vec3.mul(t, hit.hitGeom.mat.diff, lamp.diff);
-        vec3.scaleAndAdd(diffuse, diffuse, t, nDotL);
-        
-        vec3.mul(t, hit.hitGeom.mat.spec, lamp.spec);
-        vec3.scaleAndAdd(specular, specular, t, e64);
+        for (var i = 0; i < globalLightList.length; i++) {
+            
+            lamp = globalLightList[i];
+            
+            var t4 = vec4.create();
+            var t = vec3.create();
+            var C2 = vec3.create();
+            
+            var lightDirection = vec3.create();
+            var eyeDirection = vec3.create();
+            var reflectDirection = vec3.create();
+    
+            vec3.sub(t, lamp.pos, hit.hitPt);
+            vec3.normalize(lightDirection, t);
+    
+            vec3.copy(eyeDirection, hit.viewN);
+            // already normalized
+    
+            var nDotL = Math.max(vec3.dot(lightDirection, hit.surfNorm), 0);
+            
+            C2 = vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
+            vec3.sub(reflectDirection, C2, lightDirection);
+            
+            var RdotV = Math.max(vec3.dot(reflectDirection, eyeDirection), 0);
+            var e64 = Math.pow(RdotV, hit.hitGeom.mat.shiny);
+            
+            vec3.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
+            vec3.add(ambient, ambient, t);
+            
+            vec3.mul(t, hit.hitGeom.mat.diff, lamp.diff);
+            vec3.scaleAndAdd(diffuse, diffuse, t, nDotL);
+            
+            vec3.mul(t, hit.hitGeom.mat.spec, lamp.spec);
+            vec3.scaleAndAdd(specular, specular, t, e64);
+            
+        }
         
         vec3.add(color3d, color3d, ambient);
         vec3.add(color3d, color3d, diffuse);

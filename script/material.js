@@ -95,7 +95,7 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.shiny = 5.0;
 			this.name = "MATL_BLU_PLASTIC";
 			break;
-		case MATL_BLACPLASTIC:
+		case MATL_BLACK_PLASTIC:
 			vec4.set(this.emit, 0.0,     0.0,    0.0,    1.0);
 			vec4.set(this.ambi,  0.0,     0.0,    0.0,    1.0);
 			vec4.set(this.diff,  0.01,    0.01,   0.01,   1.0);
@@ -103,7 +103,7 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.shiny = 32.0;
 			this.name = "MATL_BLACPLASTIC";
 			break;
-		case MATL_BLACRUBBER:
+		case MATL_BLACK_RUBBER:
 			vec4.set(this.emit, 0.0,     0.0,    0.0,    1.0);
 			vec4.set(this.ambi,  0.02,    0.02,   0.02,   1.0);
 			vec4.set(this.diff,  0.01,    0.01,   0.01,   1.0);

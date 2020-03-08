@@ -309,6 +309,7 @@ CScene.prototype.initScene = function (num) {
     switch (num) {
         case 0:     // (default scene number; must create a 3D scene for ray-tracing
                     // create our list of CGeom shapes that fill our 3D scene:
+            
                     //---Ground Plane-----
                     // draw this in world-space; no transforms!
             this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
@@ -358,15 +359,8 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_RED_PLASTIC);
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
 
-            // and toward camera (-y) enough to stay clear of disks, and up by 1 to
-            // make this radius==1 sphere rest on gnd-plane.
-            //
-            //
-            // additional SCENE 0 SETUP   
-            //
-            //
             break;
         case 1:
             //
@@ -393,6 +387,7 @@ CScene.prototype.initScene = function (num) {
 }
 
 CScene.prototype.makeRayTracedImage = function () {
+    SetGlobalLights();
     if (settings.SuperSampling) {
         this.makeRayTracedImageSuperSampling();
     } else {
