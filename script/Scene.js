@@ -357,6 +357,9 @@ CScene.prototype.initScene = function (num) {
             // move it to a more-sensible location:
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_RED_PLASTIC);
+
             // and toward camera (-y) enough to stay clear of disks, and up by 1 to
             // make this radius==1 sphere rest on gnd-plane.
             //

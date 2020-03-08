@@ -47,6 +47,8 @@ function CGeom(shapeSelect) {
     if (shapeSelect == undefined) shapeSelect = RT_GNDPLANE;	// default shape.
     this.shapeType = shapeSelect;
 
+    this.mat = null;
+
     // Get clever:  create 'traceMe()' function that calls the tracing function
     // needed by the shape held in this CGeom object.
     switch (this.shapeType) {
@@ -125,6 +127,13 @@ function CGeom(shapeSelect) {
     // to WORLD-space coords (where we need
     // them for lighting calcs.)
 
+}
+
+CGeom.prototype.setMaterial = function (mat) {
+//==============================================================================
+// Set up material for CGeom, replacing gapColor and lineColor
+
+    this.mat = mat;
 }
 
 CGeom.prototype.setIdent = function () {
