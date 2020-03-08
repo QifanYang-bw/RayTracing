@@ -13,7 +13,7 @@ CScene.prototype.traceRayColor = function (eyeRay) {
     return this.findShade(hit);
 }
 
-var printed = false;
+// var printed = false;
 
 CScene.prototype.findShade = function (hit) {
 
@@ -31,6 +31,8 @@ CScene.prototype.findShade = function (hit) {
     // Find eyeRay color from hit----------------------------------------
     if (hit.hitGeom.mat != null) {
         // Has material
+        
+        // Phong Shader
         
         var color3d = vec3.create(); // floating-point RGBA color value
         vec3.set(color3d, 0, 0, 0); // floating-point RGBA color value
@@ -61,11 +63,6 @@ CScene.prototype.findShade = function (hit) {
         var RdotV = Math.max(vec3.dot(reflectDirection, eyeDirection), 0);
         var e64 = Math.pow(RdotV, hit.hitGeom.mat.shiny);
         
-        // if (!printed) {
-        //     console.log(vec3.dot(reflectDirection, eyeDirection), reflectDirection, eyeDirection);
-        //     printed = true;
-        // }
-        //
         vec3.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
         vec3.add(ambient, ambient, t);
         
@@ -75,21 +72,6 @@ CScene.prototype.findShade = function (hit) {
         vec3.mul(t, hit.hitGeom.mat.spec, lamp.spec);
         vec3.scaleAndAdd(specular, specular, t, e64);
         
-        
-                // Specular (Phong)
-        // '       vec3 C = normal * dot(lightDirection, normal); \n' +
-        // '       vec3 reflectDirection = 2. * C - lightDirection; \n' +
-        //    
-        //    
-        // '       float RdotV = max(dot(reflectDirection, eyeDirection), 0.0); \n' +
-        // '       float e64 = pow(RdotV, float(u_MatlSet[0].shiny)); \n' +
-
-        // '       ambient = ambient + u_LampSet[i].ambi * u_MatlSet[0].ambi;\n' +
-        // '       diffuse = diffuse + u_LampSet[i].diff * v_Kd * nDotL;\n' +
-        // '       specular = specular + u_LampSet[i].spec * u_MatlSet[0].spec * e64;\n';
-        
-		// '  gl_FragColor = vec4(emissive + ambient + diffuse + specular, v_Opacity);\n' +
-        
         vec3.add(color3d, color3d, ambient);
         vec3.add(color3d, color3d, diffuse);
         vec3.add(color3d, color3d, specular);
@@ -97,14 +79,6 @@ CScene.prototype.findShade = function (hit) {
         vec4.copy(color, hit.hitGeom.mat.emit);
         vec4.set(t4, color3d[0], color3d[1], color3d[2], 0);
         vec4.add(color, color, t4);
-        vec4.set(color, color[0], color[1], color[2], 1);
-        
-        
-        // if (!printed) {
-        //     console.log(ambient, diffuse, specular);
-        //     printed = true;
-        // }
-
     }
     else {
         // No material, use default
