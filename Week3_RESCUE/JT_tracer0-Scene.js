@@ -298,8 +298,11 @@ CScene.prototype.initScene = function(num) {
   this.rayCam.rayLookAt(gui.camEyePt, gui.camAimPt, gui.camUpVec);
   this.setImgBuf(g_myPic);    // rendering target: our global CImgBuf object
                               // declared just above main().
+
   // Set default sky color:
-  this.skyColor = vec4.fromValues( 0.3,1.0,1.0,1.0);  // cyan/bright blue
+  this.skyColor = vec4.fromValues( 0.788, 0.914, 0.965, 1.0);  // cyan/bright blue
+
+
   // Empty the 'item[] array -- discard all leftover CGeom objects it may hold.
   this.item.length = 0;       
   var iNow = 0;         // index of the last CGeom object put into item[] array
@@ -319,8 +322,10 @@ CScene.prototype.initScene = function(num) {
       iNow = this.item.length -1;                 // get its array index.
 //      console.log('iNow should be 1; it is:', iNow);
       // set up distinctive coloring:
-  	  vec4.set(this.item[iNow].gapColor,  0.3,0.6,0.7,1.0); // RGBA(A==opacity) bluish gray   
-  	  vec4.set(this.item[iNow].lineColor, 0.7,0.3,0.3,1.0);  // muddy red
+
+      vec4.set(this.item[iNow].gapColor, 0.165, 0.11, 0.055, 1.0);  //
+  	  vec4.set(this.item[iNow].lineColor,  0.941, 0.878, 0.82, 1.0); // RGBA(A==opacity)    
+
   	  // Now apply transforms to set disk's size, orientation, & position.
   	  // (Be sure to do these same transforms in WebGL preview; find them in the
   	  //  JT_VBObox-lib.js file, in VBObox0.draw() function)
@@ -330,12 +335,14 @@ CScene.prototype.initScene = function(num) {
       this.item[iNow].rayRotate(0.25*Math.PI, 1,0,0); // rot 45deg on x axis to face us
       this.item[iNow].rayRotate(0.25*Math.PI, 0,0,1); // z-axis rotate 45deg.
       
+
       //-----Disk 2------ 
       this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
       iNow = this.item.length -1;                 // get its array index.
       // set up distinctive coloring:
-      vec4.set(this.item[iNow].gapColor,  0.0,0.0,1.0,1.0); // RGBA(A==opacity) blue
-  	  vec4.set(this.item[iNow].lineColor, 1.0,1.0,0.0,1.0);  // yellow
+      vec4.set(this.item[iNow].lineColor,  1, 1, 0.776, 1.0); // 
+  	  vec4.set(this.item[iNow].gapColor, 0.161, 0.161, 0, 1.0);  // 
+
   	  // Now apply transforms to set disk's size, orientation, & position.
   	  // (Be sure to do these same transforms in WebGL preview; find them in the
   	  //  JT_VBObox-lib.js file, in VBObox0.draw() function)

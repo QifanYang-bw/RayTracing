@@ -39,8 +39,8 @@ function initGUI() {
 
 var SettingsManager = function() {
 
-	this.SuperSampling = false;
+	this.SuperSampling = true;
 	this.SampleSize = 2;
-	this.Jitter = false;
+	this.Jitter = true;
 
 };

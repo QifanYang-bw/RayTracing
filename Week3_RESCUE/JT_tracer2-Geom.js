@@ -56,8 +56,8 @@ function CGeom(shapeSelect) {
     	this.xgap = 1.0;	// line-to-line spacing
     	this.ygap = 1.0;
     	this.lineWidth = 0.1;	// fraction of xgap used for grid-line width
-    	this.lineColor = vec4.fromValues(0.1,0.5,0.1,1.0);  // RGBA green(A==opacity)
-    	this.gapColor = vec4.fromValues( 0.9,0.9,0.9,1.0);  // near-white
+    	this.lineColor = vec4.fromValues(0.004, 0.196, 0.125,1.0);  // RGBA green(A==opacity)
+    	this.gapColor = vec4.fromValues( 0.725, 0.925, 0.725,1.0);  // near-white
 	    break;
 	  case RT_DISK: //------------------------------------------------------------
 	    //set the ray-tracing function (so we call it using item[i].traceMe() )
@@ -68,7 +68,7 @@ function CGeom(shapeSelect) {
     	this.xgap = 61/107;	// line-to-line spacing: a ratio of primes.
     	this.ygap = 61/107;
     	this.lineWidth = 0.1;	// fraction of xgap used for grid-line width
-    	this.lineColor = vec4.fromValues(0.1,0.5,0.1,1.0);  // RGBA green(A==opacity)
+    	this.lineColor = vec4.fromValues(0.5,0.5,0.5,1.0);  // RGBA grey
     	this.gapColor = vec4.fromValues( 0.9,0.9,0.9,1.0);  // near-white
 	    break;
 	  case RT_SPHERE: //----------------------------------------------------------
