@@ -260,7 +260,6 @@ function CScene() {
 
     this.imgBuf = g_myPic;            // DEFAULT output image buffer
                                       // (change it with setImgBuf() if needed)
-    this.eyeRay = new CRay();	        // the ray from the camera for each pixel
     this.rayCam = new CCamera();	    // the 3D camera that sets eyeRay values:
     // this is the DEFAULT camera (256,256).
     // (change it with setImgBuf() if needed)
@@ -390,6 +389,39 @@ CScene.prototype.initScene = function (num) {
     }
 }
 
+CScene.prototype.traceRayColor = function (eyeRay) {
+
+    var color = vec4.create(); // floating-point RGBA color value
+    var myHit = new CHit(); // holds the nearest ray/grid intersection (if any)
+                            // found by tracing eyeRay thru all CGeom objects
+                            // held in our CScene.item[] array.
+
+    myHit.init();     // start by clearing our 'nearest hit-point', and
+
+    for (k = 0; k < this.item.length; k++) {  // for every CGeom in item[] array,
+        this.item[k].traceMe(eyeRay, myHit);  // trace eyeRay thru it
+    }                              // & keep nearest hit point in myHit
+ 
+    // ======================================================================
+
+    //                          Material Color
+
+    // ======================================================================
+
+
+    // Find eyeRay color from myHit----------------------------------------
+    if (myHit.hitNum == 0) {  // use myGrid tracing to determine color
+        vec4.copy(color, myHit.hitGeom.gapColor);
+    } else if (myHit.hitNum == 1) {
+        vec4.copy(color, myHit.hitGeom.lineColor);
+    } else { // if myHit.hitNum== -1)
+        vec4.copy(color, this.skyColor);
+    }
+
+    return color;
+}
+
+
 CScene.prototype.makeRayTracedImage = function () {
     if (settings.SuperSampling) {
         this.makeRayTracedImageSuperSampling();
@@ -403,7 +435,7 @@ CScene.prototype.makeRayTracedImageOriginal = function () {
 // Create an image by Ray-tracing; fill CImgBuf object  'imgBuf' with result.
 // (called when you press 'T' or 't')
 
-//  console.log("You called CScene.makeRayTracedImage!")
+    //  console.log("You called CScene.makeRayTracedImage!")
     // Update our ray-tracer camera to match the WebGL preview camera:
     this.rayCam.rayPerspective(gui.camFovy, gui.camAspect, gui.camNear);
     this.rayCam.rayLookAt(gui.camEyePt, gui.camAimPt, gui.camUpVec);
@@ -413,60 +445,30 @@ CScene.prototype.makeRayTracedImageOriginal = function () {
                                   // currently-chosen output-image buffer.
                                   // (usually g_myPic, but could have changed)
 
-    var colr = vec4.create(); // floating-point RGBA color value
     var hit = 0;
     var idx = 0;  // CImgBuf array index(i,j) == (j*this.xSiz + i)*this.pixSiz
     var i, j;      // pixel x,y coordinate (origin at lower left; integer values)
     var k;        // item[] index; selects CGeom object we're currently tracing.
 
-    this.pixFlag = 0; // DIAGNOSTIC: g_myScene.pixFlag == 1 at just one selected 
+    // this.pixFlag = 0; // DIAGNOSTIC: g_myScene.pixFlag == 1 at just one selected 
     // pixel: your ray-tracing functions (e.g. traceGrid(), 
     // traceDisk()) can use g_)myScene.pixFlag to let you print 
     // values for JUST ONE ray.
-    var myHit = new CHit(); // holds the nearest ray/grid intersection (if any)
-                            // found by tracing eyeRay thru all CGeom objects
-                            // held in our CScene.item[] array.
+
+    var initialEyeRay = new CRay();           // the ray from the camera for each pixel
 
     for (j = 0; j < this.imgBuf.ySiz; j++) {        // for the j-th row of pixels.
         for (i = 0; i < this.imgBuf.xSiz; i++) {      // and the i-th pixel on that row,
-            this.rayCam.setEyeRay(this.eyeRay, i, j);  // create ray for pixel (i,j)
-            // DIAGNOSTIC:------------------------------------
-            if (i == this.imgBuf.xSiz / 2 && j == this.imgBuf.ySiz / 4) {
-                this.pixFlag = 1;                     // pixFlag==1 for JUST ONE pixel
-                console.log("By the clever use of flags. (Eddie Izzard)");
-            } else {
-                this.pixFlag = 0;
-            }//-END DIAGNOSTIC--------------------------------
 
-            // Trace a new eyeRay thru all CGeom items: ----------------------------
-            myHit.init();     // start by clearing our 'nearest hit-point', and
-            /*      
-                  this.item[0].traceGrid(this.eyeRay, myHit);   // trace ray to grid;
-                                              // update myHit if we find a closer hit-point
-                  this.item[1].traceDisk(this.eyeRay, myHit);   // trace ray to the disk
-            */
-            for (k = 0; k < this.item.length; k++) {  // for every CGeom in item[] array,
-                this.item[k].traceMe(this.eyeRay, myHit);  // trace eyeRay thru it
-            }                              // & keep nearest hit point in myHit
+            this.rayCam.setEyeRay(initialEyeRay, i, j);  // create ray for pixel (i,j)
 
-            if (this.pixFlag == 1) {
-                console.log("flag: x,y:myHit", i, j, myHit);
-            }
-            // Find eyeRay color from myHit----------------------------------------
-            if (myHit.hitNum == 0) {  // use myGrid tracing to determine color
-                vec4.copy(colr, myHit.hitGeom.gapColor);
-            } else if (myHit.hitNum == 1) {
-                vec4.copy(colr, myHit.hitGeom.lineColor);
-            } else { // if myHit.hitNum== -1)
-                vec4.copy(colr, this.skyColor);
-            }
+            var color = this.traceRayColor(initialEyeRay);
 
-            //
             // Set pixel color in our image buffer------------------------------------
             idx = (j * this.imgBuf.xSiz + i) * this.imgBuf.pixSiz;  // Array index at pixel (i,j) 
-            this.imgBuf.fBuf[idx] = colr[0];
-            this.imgBuf.fBuf[idx + 1] = colr[1];
-            this.imgBuf.fBuf[idx + 2] = colr[2];
+            this.imgBuf.fBuf[idx] = color[0];
+            this.imgBuf.fBuf[idx + 1] = color[1];
+            this.imgBuf.fBuf[idx + 2] = color[2];
         }
     }
     this.imgBuf.float2int();    // create integer image from floating-point buffer.
@@ -487,20 +489,19 @@ CScene.prototype.makeRayTracedImageSuperSampling = function () {
                                   // currently-chosen output-image buffer.
                                   // (usually g_myPic, but could have changed)
 
-    var colr = vec4.create(); // floating-point RGBA color value
+    var sumColor = vec4.create(); // floating-point RGBA color value
 
     var hit = 0;
     var idx = 0;  // CImgBuf array index(i,j) == (j*this.xSiz + i)*this.pixSiz
     var i, j;      // pixel x,y coordinate (origin at lower left; integer values)
     var k;        // item[] index; selects CGeom object we're currently tracing.
 
-    this.pixFlag = 0; // DIAGNOSTIC: g_myScene.pixFlag == 1 at just one selected 
+    // this.pixFlag = 0; // DIAGNOSTIC: g_myScene.pixFlag == 1 at just one selected 
     // pixel: your ray-tracing functions (e.g. traceGrid(), 
     // traceDisk()) can use g_)myScene.pixFlag to let you print 
     // values for JUST ONE ray.
-    var myHit = new CHit(); // holds the nearest ray/grid intersection (if any)
-                            // found by tracing eyeRay thru all CGeom objects
-                            // held in our CScene.item[] array.
+
+    var initialEyeRay = new CRay();           // the ray from the camera for each pixel
 
     var superSamplingDim = settings.SampleSize;
     var superSamplingDimRev = 1 / superSamplingDim;
@@ -509,57 +510,28 @@ CScene.prototype.makeRayTracedImageSuperSampling = function () {
     for (j = 0; j < this.imgBuf.ySiz; j++) {        // for the j-th row of pixels.
         for (i = 0; i < this.imgBuf.xSiz; i++) {      // and the i-th pixel on that row,
 
-            // // DIAGNOSTIC:------------------------------------
-            // if(i==this.imgBuf.xSiz/2 && j==this.imgBuf.ySiz/4) { 
-            //   this.pixFlag = 1;                     // pixFlag==1 for JUST ONE pixel
-            //   console.log("By the clever use of flags. (Eddie Izzard)");
-            // }
-            // else {
-            //   this.pixFlag = 0;
-            // }//-END DIAGNOSTIC--------------------------------
-
-            vec4.set(colr, 0, 0, 0, 0);
+            vec4.set(sumColor, 0, 0, 0, 0);
 
             for (ii = 0; ii < superSamplingDim; ii++) {            // Super Sampling
                 for (jj = 0; jj < superSamplingDim; jj++) {
 
-                    this.rayCam.setJitteredSSEyeRay(this.eyeRay, i, j, ii, jj, superSamplingDimRev);  // create ray for pixel (i, j, ii, jj)
+                    this.rayCam.setJitteredSSEyeRay(initialEyeRay, i, j, ii, jj, superSamplingDimRev);  // create ray for pixel (i, j, ii, jj)
 
-                    // Trace a new eyeRay thru all CGeom items: ----------------------------
-                    myHit.init();     // start by clearing our 'nearest hit-point', and
-                    /*      
-                          this.item[0].traceGrid(this.eyeRay, myHit);   // trace ray to grid;
-                                                      // update myHit if we find a closer hit-point
-                          this.item[1].traceDisk(this.eyeRay, myHit);   // trace ray to the disk
-                    */
-                    for (k = 0; k < this.item.length; k++) {  // for every CGeom in item[] array,
-                        this.item[k].traceMe(this.eyeRay, myHit);  // trace eyeRay thru it
-                    }                              // & keep nearest hit point in myHit
+                    var sampleColor = this.traceRayColor(initialEyeRay);
 
-                    // if(this.pixFlag == 1) {
-                    //   console.log("flag: x,y:myHit", i,j, myHit);
-                    // }
-
-                    // Find eyeRay color from myHit----------------------------------------
-                    if (myHit.hitNum == 0) {  // use myGrid tracing to determine color
-                        vec4.add(colr, colr, myHit.hitGeom.gapColor);
-                    } else if (myHit.hitNum == 1) {
-                        vec4.add(colr, colr, myHit.hitGeom.lineColor);
-                    } else { // if myHit.hitNum== -1)
-                        vec4.add(colr, colr, this.skyColor);
-                    }
+                    vec4.add(sumColor, sumColor, sampleColor);
 
                 }
             }
 
-            vec4.scale(colr, colr, superSamplingScaler);
+            vec4.scale(sumColor, sumColor, superSamplingScaler);
 
             //
             // Set pixel color in our image buffer------------------------------------
             idx = (j * this.imgBuf.xSiz + i) * this.imgBuf.pixSiz;  // Array index at pixel (i,j) 
-            this.imgBuf.fBuf[idx] = colr[0];
-            this.imgBuf.fBuf[idx + 1] = colr[1];
-            this.imgBuf.fBuf[idx + 2] = colr[2];
+            this.imgBuf.fBuf[idx] = sumColor[0];
+            this.imgBuf.fBuf[idx + 1] = sumColor[1];
+            this.imgBuf.fBuf[idx + 2] = sumColor[2];
 
         }
     }
