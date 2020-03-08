@@ -279,7 +279,7 @@ CGeom.prototype.traceGrid = function(inRay, myHit) {
   vec4.set(myHit.surfNorm, 0,0,1,0);    // surface normal FIXED at world +Z.
 /* or if you wish:
   // COMPUTE the surface normal:  (needed if you transformed the gnd-plane grid)
-  // in model space we know it's always +z,
+  // in model space we know it's always +z,s
   // but we need to TRANSFORM the normal to world-space, & re-normalize it.
   vec4.transformMat4(myHit.surfNorm, vec4.fromValues(0,0,1,0), this.normal2world);
   vec4.normalize(myHit.surfNorm, myHit.surfNorm);
@@ -287,14 +287,23 @@ CGeom.prototype.traceGrid = function(inRay, myHit) {
 
   // FIND COLOR at model-space hit-point---------------------------------                        
   var loc = myHit.modelHitPt[0] / this.xgap; // how many 'xgaps' from the origin?
-  if(myHit.modelHitPt[0] < 0) loc = -loc;    // keep >0 to form double-width line at yaxis.
+  if(myHit.modelHitPt[0] < 0) loc = -loc + this.lineWidth;   
+
+  // keep >0 to form double-width line at yaxis.
+  // Adding linewidth no longer causes double width line
+
 //console.log("loc",loc, "loc%1", loc%1, "lineWidth", this.lineWidth);
   if(loc%1 < this.lineWidth) {    // fractional part of loc < linewidth? 
     myHit.hitNum =  1;            // YES. rayT hit a line of constant-x
     return;
   }
+
   loc = myHit.modelHitPt[1] / this.ygap;     // how many 'ygaps' from origin?
-  if(myHit.modelHitPt[1] < 0) loc = -loc;    // keep >0 to form double-width line at xaxis.
+  if(myHit.modelHitPt[1] < 0) loc = -loc + this.lineWidth;  
+
+  // keep >0 to form double-width line at xaxis.
+  // Adding linewidth no longer causes double width line  
+
   if(loc%1 < this.lineWidth) {    // fractional part of loc < linewidth? 
     myHit.hitNum =  1;            // YES. rayT hit a line of constant-y
     return;
@@ -368,13 +377,13 @@ CGeom.prototype.traceDisk = function(inRay, myHit) {
   
 //-------------find hit-point color:----------------
   var loc = myHit.modelHitPt[0] / this.xgap;// how many 'xgaps' from the origin?
-  if(myHit.modelHitPt[0] < 0) loc = -loc;   // keep >0 to form double-width line at yaxis.
+  if(myHit.modelHitPt[0] < 0) loc = -loc + this.lineWidth;   // keep >0 to form double-width line at yaxis.
   if(loc%1 < this.lineWidth) {    // fractional part of loc < linewidth? 
     myHit.hitNum =  0;            // YES. rayT hit a line of constant-x
     return;
   }
   loc = myHit.modelHitPt[1] / this.ygap;    // how many 'ygaps' from origin?
-  if(myHit.modelHitPt[1] < 0) loc = -loc;   // keep >0 to form double-width line at xaxis.
+  if(myHit.modelHitPt[1] < 0) loc = -loc + this.lineWidth;   // keep >0 to form double-width line at xaxis.
   if(loc%1 < this.lineWidth) {  // fractional part of loc < linewidth? 
     myHit.hitNum = 0;           // YES. rayT hit a line of constant-y
     return;
