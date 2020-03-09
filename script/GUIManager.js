@@ -29,6 +29,8 @@ function initGUI() {
     // 	gui.remember(settings.lightSource[i]);
     // }
 
+    datgui.add(settings, 'AllowShadow');
+    
     var f1 = datgui.addFolder('Sampling');
     f1.add(settings, 'SuperSampling');
     f1.add(settings, 'SampleSize', 1, 5).step(1);
@@ -39,6 +41,8 @@ function initGUI() {
 
 var SettingsManager = function () {
 
+    this.AllowShadow = false;
+    
     this.SuperSampling = true;
     this.SampleSize = 2;
     this.Jitter = true;

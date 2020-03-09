@@ -45,7 +45,7 @@ VboBoxScene1.prototype.draw = function() {
 
     // 1)--------------------copy transforms for Sphere 1 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
-    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(1.2, -1.0, 1.0));
+    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(1.2, -1.2, 1.0));
     // Send  new 'ModelMat' values to the GPU's 'u_ModelMat1' uniform: 
     gl.uniformMatrix4fv(this.u_mvpMatLoc,	// GPU location of the uniform
         false, 				// use matrix transpose instead?
@@ -72,4 +72,17 @@ VboBoxScene1.prototype.draw = function() {
         this.bgnSphere, 	// location of 1st vertex to draw;
         this.vboVerts - this.bgnSphere); // How many vertices to draw
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)  
+    
+    
+    // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
+    mat4.copy(this.mvpMat, tmp); 
+    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(-1.5, -0.8, 1));
+    gl.uniformMatrix4fv(this.u_mvpMatLoc, false, this.mvpMat);
+    mat4.copy(this.mvpMat, tmp); 
+    gl.drawArrays(gl.LINE_STRIP, 
+        // choices: gl.POINTS, gl.LINES, gl.LINE_STRIP, gl.LINE_LOOP, 
+        //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
+        this.bgnSphere,
+        this.vboVerts - this.bgnSphere); 
+    mat4.copy(this.mvpMat, tmp);
 }

@@ -386,9 +386,9 @@ CScene.prototype.initScene = function (num) {
             // Initially leave sphere at the origin. Once you see it, then
             // move it to a more-sensible location:
             this.item[iNow].setIdent();                   // start in world coord axes
-            this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
+            this.item[iNow].rayTranslate(1.2, -1.2, 1.0);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+            this.item[iNow].setMaterial(MATL_COPPER_SHINY);
             
             //-----Sphere 2-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
@@ -399,6 +399,16 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].rayTranslate(0, 1.0, 1.0);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+            
+            //-----Sphere 3-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(-1.5, -0.8, 1);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
             
             break;
         case 2:
@@ -457,7 +467,7 @@ CScene.prototype.makeRayTracedImageOriginal = function () {
 
             this.rayCam.setEyeRay(initialEyeRay, i, j);  // create ray for pixel (i,j)
 
-            var color = this.traceRayColor(initialEyeRay);
+            var color = this.traceRayColor(0, initialEyeRay);
 
             // Set pixel color in our image buffer------------------------------------
             idx = (j * this.imgBuf.xSiz + i) * this.imgBuf.pixSiz;  // Array index at pixel (i,j) 
@@ -512,7 +522,7 @@ CScene.prototype.makeRayTracedImageSuperSampling = function () {
 
                     this.rayCam.setJitteredSSEyeRay(initialEyeRay, i, j, ii, jj, superSamplingDimRev);  // create ray for pixel (i, j, ii, jj)
 
-                    var sampleColor = this.traceRayColor(initialEyeRay);
+                    var sampleColor = this.traceRayColor(0, initialEyeRay);
 
                     vec4.add(sumColor, sumColor, sampleColor);
 

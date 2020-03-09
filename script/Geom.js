@@ -305,6 +305,14 @@ CGeom.prototype.traceGrid = function (inRay, myHit) {
     // Update myHit to describe it------------------------------------------------
     myHit.t0 = t0;             // record ray-length, and
     myHit.hitGeom = this;      // record the CGeom object that we hit, and
+    
+    // ***IF*** you're tracing a shadow ray you can stop right here: we know
+    // that this ray's path to the light-source is blocked by this CGeom object.
+    
+    if (inRay.isShadowRay) {
+        return;
+    }
+    
     // Compute the x,y,z,w point where rayT hit the grid-plane in MODEL coords:
     // vec4.scaleAndAdd(out,a,b,scalar) sets out = a + b*scalar
     vec4.scaleAndAdd(myHit.modelHitPt, rayT.orig, rayT.dir, myHit.t0);
@@ -399,10 +407,17 @@ CGeom.prototype.traceDisk = function (inRay, myHit) {
         return;   // NO.  Ray MISSED the disk.
                   // Leave myHit unchanged. Don't do any further calcs. Bye!
     }
-    // YES! we found a better hit-point!
-    // Update myHit to describe it------------------------------------------------
+    // YES! we found a better hit-point!// Update myHit to describe it------------------------------------------------
     myHit.t0 = t0;             // record ray-length, and
     myHit.hitGeom = this;      // record this CGeom object as the one we hit, and
+    
+    // ***IF*** you're tracing a shadow ray you can stop right here: we know
+    // that this ray's path to the light-source is blocked by this CGeom object.
+    
+    if (inRay.isShadowRay) {
+        return;
+    }
+    
     vec4.copy(myHit.modelHitPt, modelHit);  // record the model-space hit-pt, and
     // compute the x,y,z,w point where inRay hit the grid-plane in WORLD coords:
     vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
@@ -480,10 +495,16 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     // Find L2, the squared length of r2s, by dot-product with itself:
     var L2 = vec3.dot(r2s, r2s);   // NOTE: vec3.dot() IGNORES the 'w' values when 
                                    //  vec4 arguments.  !Good! I like glMatrix...
-    // if L2 <=1.0, ray starts AT or INSIDE the unit sphere surface (!). 
+    // if L2 <= 1.0, ray starts AT or INSIDE the unit sphere surface (!). 
     if (L2 <= 1.0) { // report error and quit.  LATER we can use this case to
         // handle rays through transparent spheres.
-        console.log("CGeom.traceSphere() ERROR! rayT origin at or inside sphere!\n\n");
+        
+        if (errorCount > 3) return;
+        errorCount += 1;
+        
+        console.log("CGeom.traceSphere() ERROR! rayT origin at or inside sphere! L2 Value: " + L2 + "\n\n");
+        console.log("Report: eyeRay: ", inRay, "\n\n");
+        console.trace();
         return;       // HINT: see comments at end of this function.
     }
     // We now know L2 > 1.0; ray starts OUTSIDE the sphere.
@@ -575,7 +596,7 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     myHit.t0 = t0hit;          // record ray-length, and
     myHit.hitGeom = this;      // record this CGeom object as the one we hit, and
     
-    //     ***IF*** you're tracing a shadow ray you can stop right here: we know
+    // ***IF*** you're tracing a shadow ray you can stop right here: we know
     // that this ray's path to the light-source is blocked by this CGeom object.
     
     if (inRay.isShadowRay) {
