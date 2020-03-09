@@ -389,7 +389,6 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY);
-
             
             //-----Sphere 2-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &

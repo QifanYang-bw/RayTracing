@@ -26,9 +26,9 @@ function SetGlobalLights() {
     globalLightList.push(lamp);
     
 	var lamp = new CLight();
-    vec4.set(lamp.pos, 0, -10, 2, 1);
+    vec4.set(lamp.pos, 0, -10, 1, 1);
     vec3.set(lamp.ambi, 0.2, 0.2, 0.2);
-    vec3.set(lamp.diff, .7, .7, .7);
+    vec3.set(lamp.diff, 1.5, 1.5, .7);
     vec3.set(lamp.spec, 2, 2, .3);
     
     globalLightList.push(lamp);
