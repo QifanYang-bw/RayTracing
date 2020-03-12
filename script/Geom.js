@@ -617,8 +617,22 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
 
     // Now find surface normal: 
     // but we need to TRANSFORM the normal to world-space, & re-normalize it.
-    vec4.transformMat4(myHit.surfNorm, myHit.modelHitPt, this.normal2world);
+
+    var t4 = vec4.create();
+    vec4.set(t4, myHit.modelHitPt[0], myHit.modelHitPt[1], myHit.modelHitPt[2], 0);
+    // vec4.transformMat4(myHit.surfNorm, t4, this.normal2world);
+    vec4.transformMat4(myHit.surfNorm, t4, this.worldRay2model);
+
     vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+
+    // if (printed < 20){
+    //     // if (printed) {
+    //         console.log("surf norm sample :", myHit.surfNorm);
+    //         console.log("modelHitPt :", myHit.modelHitPt);
+    //         console.log("normal2world :", this.normal2world);
+    //     // }
+    //     printed++;
+    // }
     
     // TEMPORARY: sphere color-setting
 

@@ -69,6 +69,13 @@ CScene.prototype.findShade = function (depth, hit) {
     // returns Material Color
 
     var color = vec4.create(); // floating-point RGBA color value
+
+    // if (printed < 100 && hit.hitGeom.shapeType == RT_SPHERE){
+    //     if (printed) {
+    //         console.log("surf norm sample :", hit.surfNorm);
+    //     }
+    //     printed++;
+    // }
     
     // Find eyeRay color from hit----------------------------------------
     if (hit.hitGeom.mat != null && hit.hitGeom !== -1) {
@@ -76,9 +83,9 @@ CScene.prototype.findShade = function (depth, hit) {
         
         // Phong Shader
         
-        var ambient = vec4.create();
-        var diffuse = vec4.create();
-        var specular = vec4.create();
+        var ambient = vec3.create();
+        var diffuse = vec3.create();
+        var specular = vec3.create();
         
         var lamp, localShadowFlag;
         
@@ -87,24 +94,27 @@ CScene.prototype.findShade = function (depth, hit) {
             
             // =============================================================
             // Calculate Light Direction and Reflect Direction for multiple uses
+
+            var color3d = vec3.create(); // floating-point RGB color value
             
-            var t = vec4.create();
-            var lightDirection = vec4.create();
+            var t = vec3.create();
+
+            var lightDirection = vec3.create();
     
-            vec4.sub(t, lamp.pos, hit.hitPt);
-            vec4.normalize(lightDirection, t);
+            vec3.sub(t, lamp.pos, hit.hitPt);
+            vec3.normalize(lightDirection, t);
             
-            var C2 = vec4.create();
-            var eyeDirection = vec4.create();
-            var reflectDirection = vec4.create();
+            var C2 = vec3.create();
+            var eyeDirection = vec3.create();
+            var reflectDirection = vec3.create();
     
-            vec4.copy(eyeDirection, hit.viewN);
+            vec3.copy(eyeDirection, hit.viewN);
             // already normalized
     
-            var nDotL = Math.max(vec4.dot(lightDirection, hit.surfNorm), 0);
+            var nDotL = Math.max(vec3.dot(lightDirection, hit.surfNorm), 0);
             
-            C2 = vec4.scale(C2, hit.surfNorm, vec4.dot(lightDirection, hit.surfNorm) * 2);
-            vec4.sub(reflectDirection, C2, lightDirection);
+            C2 = vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
+            vec3.sub(reflectDirection, C2, lightDirection);
             
             // =============================================================
             // Pause Calculation ...
@@ -112,47 +122,53 @@ CScene.prototype.findShade = function (depth, hit) {
             
             var shadowRay = new CRay();   
             vec4.copy(shadowRay.orig, hit.hitPt);   // memory-to-memory copy. 
-            vec4.copy(shadowRay.dir, lightDirection);
+            vec4.set(shadowRay.dir, lightDirection[0], lightDirection[1], lightDirection[2], 0);
             // vec4.scale(shadowRay.dir, shadowRay.dir, -1);
             shadowRay.isShadowRay = true;
             
-            vec4.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
-            vec4.add(ambient, ambient, t);
+            vec3.mul(t, hit.hitGeom.mat.ambi, lamp.ambi);
+            vec3.add(ambient, ambient, t);
             
             // =============================================================
             // Resume Calculation only if not in shadow
             
             if (settings.AllowShadow)
-                localShadowFlag = this.traceShadowRay(shadowRay, Math.sqrt(vec4.dist(hit.hitPt, lamp.pos)), hit.hitGeom);
+                localShadowFlag = this.traceShadowRay(shadowRay, Math.sqrt(vec3.dist(hit.hitPt, lamp.pos)), hit.hitGeom);
             
             if (!localShadowFlag || !settings.AllowShadow) {
                 
-                var RdotV = Math.max(vec4.dot(reflectDirection, eyeDirection), 0);
+                var RdotV = Math.max(vec3.dot(reflectDirection, eyeDirection), 0);
                 var e64 = Math.pow(RdotV, hit.hitGeom.mat.shiny);
                 
-                vec4.mul(t, hit.hitGeom.mat.diff, lamp.diff);
-                vec4.scaleAndAdd(diffuse, diffuse, t, nDotL);
+                vec3.mul(t, hit.hitGeom.mat.diff, lamp.diff);
+                vec3.scaleAndAdd(diffuse, diffuse, t, nDotL);
                 
-                vec4.mul(t, hit.hitGeom.mat.spec, lamp.spec);
-                vec4.scaleAndAdd(specular, specular, t, e64);
+                vec3.mul(t, hit.hitGeom.mat.spec, lamp.spec);
+                vec3.scaleAndAdd(specular, specular, t, e64);
             }
             
             if (hit.hitGeom.mat.allowReflect && depth < 1) { // global settings later
                 var reflectRay = new CRay();   
-                vec4.copy(reflectRay.orig, hit.hitPt);   // memory-to-memory copy. 
-                vec4.copy(reflectRay.dir, reflectDirection);
+                vec4.copy(reflectRay.orig, hit.hitPt);   // memory-to-memory copy.
+                vec4.set(reflectRay.dir, reflectDirection[0], reflectDirection[1], reflectDirection[2], 0);
      
                 var reflectColor = this.traceRayColor(depth + 1, reflectRay, hit.hitGeom);
-                vec4.scale(reflectColor, reflectColor, hit.hitGeom.mat.reflectRatio);
+
+                vec3.scale(reflectColor, reflectColor, hit.hitGeom.mat.reflectRatio);
                 
-                vec4.add(color, color, reflectColor);
+                vec3.add(color3d, color3d, reflectColor);
             }
         }
-        
+
+        vec3.add(color3d, color3d, ambient);
+        vec3.add(color3d, color3d, diffuse);
+        vec3.add(color3d, color3d, specular);
+
         vec4.copy(color, hit.hitGeom.mat.emit);
-        vec4.add(color, color, ambient);
-        vec4.add(color, color, diffuse);
-        vec4.add(color, color, specular); // A property can be a potential problem
+        var t4 = vec4.create();
+        vec4.set(t4, color3d[0], color3d[1], color3d[2], 0);
+
+        vec4.add(color, color, t4); // A property can be a potential problem
         
     }
     else {

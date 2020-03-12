@@ -172,7 +172,7 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.name = "MATL_COPPER_SHINY_REFLECT";
 			
 			this.allowReflect = true;
-			this.reflectRatio = 1;
+			this.reflectRatio = 0.5;
 			
 			break;
 		case MATL_GOLD_DULL:
@@ -224,7 +224,7 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.name = "MATL_SILVER_SHINY_REFLECT";
 			
 			this.allowReflect = true;
-			this.reflectRatio = 1;
+			this.reflectRatio = 0.5;
 			
 			break;
 		case MATL_EMERALD:

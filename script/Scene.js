@@ -388,7 +388,7 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(1.2, -1.2, 1.0);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_COPPER_SHINY);
+            this.item[iNow].setMaterial(MATL_COPPER_SHINY_REFLECT);
             
             //-----Sphere 2-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
@@ -398,7 +398,7 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(0, 1.0, 1.0);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
             
             //-----Sphere 3-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
