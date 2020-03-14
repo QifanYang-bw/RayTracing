@@ -19,7 +19,7 @@ function SetGlobalLights() {
 	
 	var lamp = new CLight();
     vec4.set(lamp.pos, 0, 0, 10, 1);
-    vec3.set(lamp.ambi, 0.8, 0.8, 0.8);
+    vec3.set(lamp.ambi, 0.4, 0.4, 0.4);
     vec3.set(lamp.diff, 1, 1, 1);
     vec3.set(lamp.spec, 1, 1, 1);
 
@@ -29,7 +29,7 @@ function SetGlobalLights() {
     vec4.set(lamp.pos, 2, -8, 1, 1);
     vec3.set(lamp.ambi, 0.2, 0.2, 0.2);
     vec3.set(lamp.diff, 1.5, 1.5, .7);
-    vec3.set(lamp.spec, 2, 2, .3);
+    vec3.set(lamp.spec, 0.6, 0.6, 0.3);
     
     globalLightList.push(lamp);
     

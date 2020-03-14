@@ -113,7 +113,7 @@ CScene.prototype.findShade = function (depth, hit) {
     
             var nDotL = Math.max(vec3.dot(lightDirection, hit.surfNorm), 0);
             
-            C2 = vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
+            vec3.scale(C2, hit.surfNorm, vec3.dot(lightDirection, hit.surfNorm) * 2);
             vec3.sub(reflectDirection, C2, lightDirection);
             
             // =============================================================
@@ -121,6 +121,7 @@ CScene.prototype.findShade = function (depth, hit) {
             // Check whether the light source is covered
             
             var shadowRay = new CRay();   
+
             vec4.copy(shadowRay.orig, hit.hitPt);   // memory-to-memory copy. 
             vec4.set(shadowRay.dir, lightDirection[0], lightDirection[1], lightDirection[2], 0);
             // vec4.scale(shadowRay.dir, shadowRay.dir, -1);
@@ -147,20 +148,35 @@ CScene.prototype.findShade = function (depth, hit) {
                 vec3.scaleAndAdd(specular, specular, t, e64);
             }
             
-            if (hit.hitGeom.mat.allowReflect && depth < 1) { // global settings later
-                var reflectRay = new CRay();   
-                vec4.copy(reflectRay.orig, hit.hitPt);   // memory-to-memory copy.
-                vec4.set(reflectRay.dir, reflectDirection[0], reflectDirection[1], reflectDirection[2], 0);
-     
-                var reflectColor = this.traceRayColor(depth + 1, reflectRay, hit.hitGeom);
-
-                vec3.scale(reflectColor, reflectColor, hit.hitGeom.mat.reflectRatio);
-                
-                vec3.add(color3d, color3d, reflectColor);
-            }
         }
 
-        vec3.add(color3d, color3d, ambient);
+        // Reflection is calculated regardless of lighting status
+
+        if (hit.hitGeom.mat.allowReflect && depth < settings.TraceDepth) {
+            var C2, reflectDirection;
+
+            vec3.scale(C2, hit.surfNorm, vec3.dot(eyeDirection, hit.surfNorm) * 2);
+            vec3.sub(reflectDirection, C2, eyeDirection);
+
+            var reflectRay = new CRay();   
+            vec4.copy(reflectRay.orig, hit.hitPt);   // memory-to-memory copy.
+            vec4.set(reflectRay.dir, reflectDirection[0], reflectDirection[1], reflectDirection[2], 0);
+ 
+            var reflectColor = this.traceRayColor(depth + 1, reflectRay, hit.hitGeom);
+
+            // vec3.scale(reflectColor, reflectColor, hit.hitGeom.mat.reflectRatio);
+
+            vec4.mul(reflectColor, reflectColor, ambient);
+            
+            vec3.add(color3d, color3d, reflectColor);
+            
+        }
+        else {
+
+            vec3.add(color3d, color3d, ambient);
+
+        }
+
         vec3.add(color3d, color3d, diffuse);
         vec3.add(color3d, color3d, specular);
 

@@ -30,6 +30,7 @@ function initGUI() {
     // }
 
     datgui.add(settings, 'AllowShadow');
+    datgui.add(settings, 'TraceDepth', 0, 4).step(1);
     
     var f1 = datgui.addFolder('Sampling');
     f1.add(settings, 'SuperSampling');
@@ -41,10 +42,11 @@ function initGUI() {
 
 var SettingsManager = function () {
 
-    this.AllowShadow = false;
+    this.AllowShadow = true;
+    this.TraceDepth = 3;
     
     this.SuperSampling = true;
-    this.SampleSize = 2;
+    this.SampleSize = 3;
     this.Jitter = true;
 
 };
