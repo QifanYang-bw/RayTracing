@@ -620,8 +620,9 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
 
     var t4 = vec4.create();
     vec4.set(t4, myHit.modelHitPt[0], myHit.modelHitPt[1], myHit.modelHitPt[2], 0);
-    // vec4.transformMat4(myHit.surfNorm, t4, this.normal2world);
-    vec4.transformMat4(myHit.surfNorm, t4, this.worldRay2model);
+    vec4.transformMat4(myHit.surfNorm, t4, this.normal2world);
+    vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+    // vec4.transformMat4(myHit.surfNorm, t4, this.worldRay2model);
 
     vec4.normalize(myHit.surfNorm, myHit.surfNorm);
 
