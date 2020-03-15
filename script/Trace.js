@@ -166,10 +166,10 @@ CScene.prototype.findShade = function (depth, hit) {
 
             // vec3.scale(reflectColor, reflectColor, hit.hitGeom.mat.reflectRatio);
 
-            vec4.mul(reflectColor, reflectColor, ambient);
+            vec4.mul(reflectColor, reflectColor, hit.hitGeom.mat.spec);
             
             vec3.add(color3d, color3d, reflectColor);
-            
+
         }
         else {
 
