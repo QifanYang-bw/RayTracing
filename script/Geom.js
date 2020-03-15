@@ -643,11 +643,11 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
         myHit.hitNum = 0;
 
     // DIAGNOSTIC:---------------------------------------------------------------
-    if (g_myScene.pixFlag == 1) {   // did we reach the one 'flagged' pixel
-        // chosen in CScene.makeRayTracedImage()?
-        console.log("r2s:", r2s, "L2", L2, "tcaS", tcaS, "tca2", tca2,
-            "LM2", LM2, "L2hc", L2hc, "t0hit", t0hit,);  // YES!
-    }
+    // if (g_myScene.pixFlag == 1) {   // did we reach the one 'flagged' pixel
+    //     // chosen in CScene.makeRayTracedImage()?
+    //     console.log("r2s:", r2s, "L2", L2, "tcaS", tcaS, "tca2", tca2,
+    //         "LM2", LM2, "L2hc", L2hc, "t0hit", t0hit,);  // YES!
+    // }
     // END DIAGNOSTIC:------------------------------------------------------------
 
     // FOR LATER:

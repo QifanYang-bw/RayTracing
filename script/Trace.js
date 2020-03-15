@@ -89,8 +89,9 @@ CScene.prototype.findShade = function (depth, hit) {
         
         var lamp, localShadowFlag;
         
-        for (var i = 0; i < globalLightList.length; i++) {
+        for (var i = 0; i < globalLightCount; i++) {
             lamp = globalLightList[i];
+            if (!lamp.isLit) continue; 
             
             // =============================================================
             // Calculate Light Direction and Reflect Direction for multiple uses
@@ -169,14 +170,9 @@ CScene.prototype.findShade = function (depth, hit) {
             vec4.mul(reflectColor, reflectColor, hit.hitGeom.mat.spec);
             
             vec3.add(color3d, color3d, reflectColor);
-
-        }
-        else {
-
-            vec3.add(color3d, color3d, ambient);
-
         }
 
+        vec3.add(color3d, color3d, ambient);
         vec3.add(color3d, color3d, diffuse);
         vec3.add(color3d, color3d, specular);
 

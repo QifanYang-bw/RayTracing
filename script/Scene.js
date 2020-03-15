@@ -427,7 +427,6 @@ CScene.prototype.initScene = function (num) {
 }
 
 CScene.prototype.makeRayTracedImage = function () {
-    SetGlobalLights();
     if (settings.SuperSampling) {
         this.makeRayTracedImageSuperSampling();
     } else {

@@ -51,7 +51,9 @@ var gui = new GUIbox(); // Holds all (Graphical) User Interface fcns & vars, for
                         // gui.camFovy, gui.camAspect, gui.camNear
                         // gui.camEyePt, gui.camAimPt, gui.camUpVec    
 //-----For the VBOs & Shaders:-----------------
-preView = new VboBoxScene1();		// For WebGLpreview: holds one VBO and its shaders
+
+preViewArray = [new VboBoxPrev(), new VboBoxScene1()];
+// preView = new VboBoxScene1();		// For WebGLpreview: holds one VBO and its shaders
 rayView = new VboBoxTrace();		// for displaying the ray-tracing results.
 
 //-----------Ray Tracer Objects:---------------
@@ -108,11 +110,12 @@ function main() {
                                   // (see JT_GUIbox-Lib.js )
     
     initGUI();
-    
+
     g_myScene.initScene(settings.SceneSelection);       // initialize our ray-tracer (to default scene)
     
     // Initialize each of our 'vboBox' objects: 
-    preView.init(gl);		// VBO + shaders + uniforms + attribs for WebGL preview
+    preViewArray[settings.SceneSelection].init(gl);		// VBO + shaders + uniforms + attribs for WebGL preview
+
     rayView.init(gl);		//  "		"		" to display ray-traced on-screen result.
 
     onBrowserResize();			// Re-size this canvas before we use it. (ignore the 
@@ -370,9 +373,9 @@ function drawAll() {
         0,														// (x,y) location(in pixels)
         gl.drawingBufferWidth / 2, 			// viewport width, height.
         gl.drawingBufferHeight);
-    preView.switchToMe();  // Set WebGL to render from this VBObox.
-    preView.adjust();		  // Send new values for uniforms to the GPU, and
-    preView.draw();			  // draw our VBO's contents using our shaders.
+    preViewArray[settings.SceneSelection].switchToMe();  // Set WebGL to render from this VBObox.
+    preViewArray[settings.SceneSelection].adjust();		  // Send new values for uniforms to the GPU, and
+    preViewArray[settings.SceneSelection].draw();			  // draw our VBO's contents using our shaders.
 
     // Draw in the RIGHT viewport:
     //------------------------------------------
@@ -387,80 +390,85 @@ function drawAll() {
 
 }
 
-function onSuperSampleButton() {
-//=============================================================================
-// advance to the next antialiasing mode.
-    //console.log('ON-SuperSample BUTTON!');
-    g_AAcode += 1;
-    if (g_AAcode > G_AA_MAX) g_AAcode = 1; // 1,2,3,4, 1,2,3,4, 1,2,... etc
-    // report it:
-    if (g_AAcode == 1) {
-        if (g_isJitter == 0) {
-            document.getElementById('AAreport').innerHTML =
-                "1 sample/pixel. No jitter.";
-            console.log("1 sample/pixel. No Jitter.");
-        } else {
-            document.getElementById('AAreport').innerHTML =
-                "1 sample/pixel, but jittered.";
-            console.log("1 sample/pixel, but jittered.")
-        }
-    } else { // g_AAcode !=1
-        if (g_isJitter == 0) {
-            document.getElementById('AAreport').innerHTML =
-                g_AAcode + "x" + g_AAcode + " Supersampling. No jitter.";
-            console.log(g_AAcode, "x", g_AAcode, "Supersampling. No Jitter.");
-        } else {
-            document.getElementById('AAreport').innerHTML =
-                g_AAcode + "x" + g_AAcode + " JITTERED Supersampling";
-            console.log(g_AAcode, "x", g_AAcode, " JITTERED Supersampling.");
-        }
-    }
-}
+// function onSuperSampleButton() {
+// //=============================================================================
+// // advance to the next antialiasing mode.
+//     //console.log('ON-SuperSample BUTTON!');
+//     g_AAcode += 1;
+//     if (g_AAcode > G_AA_MAX) g_AAcode = 1; // 1,2,3,4, 1,2,3,4, 1,2,... etc
+//     // report it:
+//     if (g_AAcode == 1) {
+//         if (g_isJitter == 0) {
+//             document.getElementById('AAreport').innerHTML =
+//                 "1 sample/pixel. No jitter.";
+//             console.log("1 sample/pixel. No Jitter.");
+//         } else {
+//             document.getElementById('AAreport').innerHTML =
+//                 "1 sample/pixel, but jittered.";
+//             console.log("1 sample/pixel, but jittered.")
+//         }
+//     } else { // g_AAcode !=1
+//         if (g_isJitter == 0) {
+//             document.getElementById('AAreport').innerHTML =
+//                 g_AAcode + "x" + g_AAcode + " Supersampling. No jitter.";
+//             console.log(g_AAcode, "x", g_AAcode, "Supersampling. No Jitter.");
+//         } else {
+//             document.getElementById('AAreport').innerHTML =
+//                 g_AAcode + "x" + g_AAcode + " JITTERED Supersampling";
+//             console.log(g_AAcode, "x", g_AAcode, " JITTERED Supersampling.");
+//         }
+//     }
+// }
 
-function onJitterButton() {
-//=============================================================================
-    console.log('ON-JITTER button!!');
-    if (g_isJitter == 0) g_isJitter = 1;      // toggle 0,1,0,1,...
-    else g_isJitter = 0;
+// function onJitterButton() {
+// //=============================================================================
+//     console.log('ON-JITTER button!!');
+//     if (g_isJitter == 0) g_isJitter = 1;      // toggle 0,1,0,1,...
+//     else g_isJitter = 0;
 
-    // report it:
-    if (g_AAcode == 1) {
-        if (g_isJitter == 0) {
-            document.getElementById('AAreport').innerHTML =
-                "1 sample/pixel. No jitter.";
-            console.log("1 sample/pixel. No Jitter.");
-        } else {
-            document.getElementById('AAreport').innerHTML =
-                "1 sample/pixel, but jittered.";
-            console.log("1 sample/pixel, but jittered.")
-        }
-    } else { // g_AAcode !=0
-        if (g_isJitter == 0) {
-            document.getElementById('AAreport').innerHTML =
-                g_AAcode + "x" + g_AAcode + " Supersampling. No jitter.";
-            console.log(g_AAcode, "x", g_AAcode, "Supersampling. No Jitter.");
-        } else {
-            document.getElementById('AAreport').innerHTML =
-                g_AAcode + "x" + g_AAcode + " JITTERED Supersampling";
-            console.log(g_AAcode, "x", g_AAcode, " JITTERED Supersampling.");
-        }
-    }
-}
+//     // report it:
+//     if (g_AAcode == 1) {
+//         if (g_isJitter == 0) {
+//             document.getElementById('AAreport').innerHTML =
+//                 "1 sample/pixel. No jitter.";
+//             console.log("1 sample/pixel. No Jitter.");
+//         } else {
+//             document.getElementById('AAreport').innerHTML =
+//                 "1 sample/pixel, but jittered.";
+//             console.log("1 sample/pixel, but jittered.")
+//         }
+//     } else { // g_AAcode !=0
+//         if (g_isJitter == 0) {
+//             document.getElementById('AAreport').innerHTML =
+//                 g_AAcode + "x" + g_AAcode + " Supersampling. No jitter.";
+//             console.log(g_AAcode, "x", g_AAcode, "Supersampling. No Jitter.");
+//         } else {
+//             document.getElementById('AAreport').innerHTML =
+//                 g_AAcode + "x" + g_AAcode + " JITTERED Supersampling";
+//             console.log(g_AAcode, "x", g_AAcode, " JITTERED Supersampling.");
+//         }
+//     }
+// }
 
-function onSceneButton() {
+function onSceneChange() {
 //=============================================================================
     //console.log('ON-SCENE BUTTON!');
-    if (g_SceneNum < 0 || g_SceneNum >= G_SCENE_MAX) g_SceneNum = 0;
-    else g_SceneNum = g_SceneNum + 1;
 
-    document.getElementById('SceneReport').innerHTML =
-        'Show Scene Number' + g_SceneNum;
+    // document.getElementById('SceneReport').innerHTML =
+    //     'Show Scene Number' + g_SceneNum;
+
+    // ========== Do not set rayView to orange; Leave it as it is ========== 
 
     // Change g_myPic contents:
-    g_myPic.setTestPattern(g_SceneNum);
+    // g_myPic.setTestPattern(g_SceneNum);
+
     // transfer g_myPic's new contents to the GPU;
-    rayView.switchToMe(); // be sure OUR VBO & shaders are in use, then
-    rayView.reload();     // re-transfer VBO contents and texture-map contents
+    // rayView.switchToMe(); // be sure OUR VBO & shaders are in use, then
+    // rayView.reload();     // re-transfer VBO contents and texture-map contents
+
+    g_myScene.initScene(settings.SceneSelection);       // initialize our ray-tracer 
+    preViewArray[settings.SceneSelection].init(gl);     // VBO + shaders + uniforms + attribs for WebGL preview
+
     drawAll();
 }
 

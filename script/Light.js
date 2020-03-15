@@ -1,9 +1,10 @@
-var globalLightList;
+var globalLightList = [];
+var globalLightCount = 3;
 
 function CLight(isOn = true) {
 //===============================================================================
 // Constructor function:
-	var isLit = isOn;						// true/false for ON/OFF
+	this.isLit = isOn;						// true/false for ON/OFF
 
     this.name = "Undefined Light";		// text string with material name.
 
@@ -13,24 +14,24 @@ function CLight(isOn = true) {
 	this.spec = vec3.create();
 }
 
-function SetGlobalLights() {
+// function SetGlobalLights() {
 	
-	globalLightList = [];
+	// globalLightList = [new CLight(), new CLight(), new CLight()];
 	
-	var lamp = new CLight();
-    vec4.set(lamp.pos, 0, 0, 10, 1);
-    vec3.set(lamp.ambi, 1, 1, 1);
-    vec3.set(lamp.diff, 0.4, 0.4, 0.4);
-    vec3.set(lamp.spec, 0.2, 0.2, 0.2);
+	// var lamp = new CLight();
+ //    vec4.set(lamp.pos, 0, 0, 10, 1);
+ //    vec3.set(lamp.ambi, 1, 1, 1);
+ //    vec3.set(lamp.diff, 0.4, 0.4, 0.4);
+ //    vec3.set(lamp.spec, 0.2, 0.2, 0.2);
 
-    globalLightList.push(lamp);
+ //    globalLightList.push(lamp);
     
-	var lamp = new CLight();
-    vec4.set(lamp.pos, 2, -8, 1, 1);
-    vec3.set(lamp.ambi, 0.4, 0.4, 0.2);
-    vec3.set(lamp.diff, 0.9, 0.9, .45);
-    vec3.set(lamp.spec, 0.6, 0.6, 0.3);
+	// var lamp = new CLight();
+ //    vec4.set(lamp.pos, 2, -8, 1, 1);
+ //    vec3.set(lamp.ambi, 0.4, 0.4, 0.2);
+ //    vec3.set(lamp.diff, 0.9, 0.9, .45);
+ //    vec3.set(lamp.spec, 0.6, 0.6, 0.3);
     
-    globalLightList.push(lamp);
+ //    globalLightList.push(lamp);
     
-}
+// }
