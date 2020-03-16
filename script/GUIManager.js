@@ -128,12 +128,12 @@ var SettingsManager = function () {
 
     }
 
-    this.SceneSelection = 2;
+    this.SceneSelection = 3;
 
     this.AllowShadow = true;
-    this.TraceDepth = 3;
+    this.TraceDepth = 5;
     
-    this.SuperSampling = false;
+    this.SuperSampling = true;
     this.SampleSize = 2;
     this.Jitter = true;
 

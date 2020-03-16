@@ -465,6 +465,18 @@ CScene.prototype.initScene = function (num) {
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
 
+            //-----Cylinder 2-----
+            this.item.push(new CGeom(RT_CYLINDER));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(6.0, 12.0, 6.0);  // move rightwards (+x),
+            this.item[iNow].rayRotate(0.35 * Math.PI, 1, 0, 0); // rot on y axis
+            // this.item[iNow].rayScale(1, 1, 1);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_BRASS);
+
             //-----Sphere 1-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
             iNow = this.item.length - 1;                 // get its array index.

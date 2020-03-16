@@ -10,8 +10,6 @@ VboBoxScene0.prototype.draw = function () {
 //=============================================================================
 // Render current VBObox contents.
 
-    VboBoxPrev.prototype.draw.apply(this, arguments);
-
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
         console.log('ERROR! before' + this.constructor.name +
@@ -41,9 +39,7 @@ VboBoxScene0.prototype.draw = function () {
         // (see constructor to understand)
         this.bgnDisk);  // draw only the axes & ground-plane.
 
-    // Draw Model-space objects:--------------
-    var tmp = mat4.create();
-    mat4.copy(tmp, this.mvpMat);    // SAVE current value (needs push-down stack!)
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // 1) -----------------copy transforms for Disk 1 in CScene.initScene(0) :
     mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(1.0, 1.0, 1.3));
@@ -90,7 +86,6 @@ VboBoxScene0.prototype.draw = function () {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,     // location of 1st vertex to draw;
         this.bgnCyl - this.bgnSphere); // How many vertices to draw
-    mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!) 
 
     // 4)--------------------copy transforms for Sphere 1 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
@@ -105,7 +100,6 @@ VboBoxScene0.prototype.draw = function () {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,     // location of 1st vertex to draw;
         this.bgnCyl - this.bgnSphere); // How many vertices to draw
-    mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!) 
 
     // 5)--------------------copy transforms for Sphere 1 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
@@ -120,7 +114,7 @@ VboBoxScene0.prototype.draw = function () {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,     // location of 1st vertex to draw;
         this.bgnCyl - this.bgnSphere); // How many vertices to draw
-    mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!) 
+
 }
 
 //=============================================================================
@@ -134,8 +128,6 @@ VboBoxScene1.prototype.constructor = VboBoxScene1;
 VboBoxScene1.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
-
-    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
@@ -166,9 +158,7 @@ VboBoxScene1.prototype.draw = function() {
         // (see constructor to understand)
         this.bgnDisk);  // draw only the axes & ground-plane.
 
-    // Draw Model-space objects:--------------
-    var tmp = mat4.create();
-    mat4.copy(tmp, this.mvpMat);    // SAVE current value (needs push-down stack!)
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // 1)--------------------copy transforms for Sphere 1 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
@@ -182,8 +172,7 @@ VboBoxScene1.prototype.draw = function() {
         // choices: gl.POINTS, gl.LINES, gl.LINE_STRIP, gl.LINE_LOOP, 
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere, 	// location of 1st vertex to draw;
-        this.bgnCyl - this.bgnSphere); // How many vertices to draw
-    mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)  
+        this.bgnCyl - this.bgnSphere); // How many vertices to draw  
     
     // 2)--------------------copy transforms for Sphere 2 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)
@@ -197,8 +186,7 @@ VboBoxScene1.prototype.draw = function() {
         // choices: gl.POINTS, gl.LINES, gl.LINE_STRIP, gl.LINE_LOOP, 
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere, 	// location of 1st vertex to draw;
-        this.bgnCyl - this.bgnSphere); // How many vertices to draw
-    mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)  
+        this.bgnCyl - this.bgnSphere); // How many vertices to draw  
     
     
     // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
@@ -211,7 +199,6 @@ VboBoxScene1.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,
         this.bgnCyl - this.bgnSphere); 
-    mat4.copy(this.mvpMat, tmp);
 }
 
 //=============================================================================
@@ -220,13 +207,11 @@ function VboBoxScene2() {
 }
 
 VboBoxScene2.prototype = Object.create(VboBoxPrev.prototype);
-VboBoxScene2.prototype.constructor = VboBoxScene1;
+VboBoxScene2.prototype.constructor = VboBoxScene2;
 
 VboBoxScene2.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
-
-    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
@@ -257,14 +242,12 @@ VboBoxScene2.prototype.draw = function() {
         // (see constructor to understand)
         this.bgnDisk);  // draw only the axes & ground-plane.
 
-    // Draw Model-space objects:--------------
-    var tmp = mat4.create();
-    mat4.copy(tmp, this.mvpMat);    // SAVE current value (needs push-down stack!)
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // 1)--------------------copy transforms for Cylinder 1 in CScene.initScene(2)
     mat4.copy(this.mvpMat, tmp); 
     mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(0, 4.0, 3.2));
-    mat4.rotate(this.mvpMat, this.mvpMat, 0.45 * Math.PI, vec3.fromValues(1, 0, 0));
+    mat4.rotate(this.mvpMat, this.mvpMat, 0.45 * Math.PI, vec3.fromValues(0, 1, 0));
     gl.uniformMatrix4fv(this.u_mvpMatLoc, false, this.mvpMat);
     mat4.copy(this.mvpMat, tmp); 
     gl.drawArrays(gl.LINE_STRIP, 
@@ -272,7 +255,18 @@ VboBoxScene2.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnCyl,
         this.vboVerts - this.bgnCyl); 
-    mat4.copy(this.mvpMat, tmp);
+
+    // 1)--------------------copy transforms for Cylinder 1 in CScene.initScene(2)
+    mat4.copy(this.mvpMat, tmp); 
+    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(6.0, 12.0, 6.0));
+    mat4.rotate(this.mvpMat, this.mvpMat, 0.35 * Math.PI, vec3.fromValues(1, 0, 0));
+    gl.uniformMatrix4fv(this.u_mvpMatLoc, false, this.mvpMat);
+    mat4.copy(this.mvpMat, tmp); 
+    gl.drawArrays(gl.LINE_STRIP, 
+        // choices: gl.POINTS, gl.LINES, gl.LINE_STRIP, gl.LINE_LOOP, 
+        //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
+        this.bgnCyl,
+        this.vboVerts - this.bgnCyl); 
 
 
     // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
@@ -285,7 +279,6 @@ VboBoxScene2.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,
         this.bgnCyl - this.bgnSphere); 
-    mat4.copy(this.mvpMat, tmp);
 
 
     // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
@@ -299,7 +292,6 @@ VboBoxScene2.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,
         this.bgnCyl - this.bgnSphere); 
-    mat4.copy(this.mvpMat, tmp);
 
     // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); 
@@ -311,9 +303,9 @@ VboBoxScene2.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,
         this.bgnCyl - this.bgnSphere); 
-    mat4.copy(this.mvpMat, tmp);
 
     // 4) -----------------copy transforms for Disk 1 in CScene.initScene(0) :
+    mat4.copy(this.mvpMat, tmp); 
     mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(-6, 0, 5));
     mat4.rotate(this.mvpMat, this.mvpMat, 0.45 * Math.PI, vec3.fromValues(0, 1, 0));
     mat4.scale(this.mvpMat, this.mvpMat, vec3.fromValues(3, 3, 1));
@@ -341,8 +333,6 @@ VboBoxScene3.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
 
-    VboBoxPrev.prototype.draw.apply(this, arguments);
-
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
         console.log('ERROR! before' + this.constructor.name +
@@ -372,9 +362,7 @@ VboBoxScene3.prototype.draw = function() {
         // (see constructor to understand)
         this.bgnDisk);  // draw only the axes & ground-plane.
 
-    // Draw Model-space objects:--------------
-    var tmp = mat4.create();
-    mat4.copy(tmp, this.mvpMat);    // SAVE current value (needs push-down stack!)
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // 4) -----------------copy transforms for Disk 1 in CScene.initScene(0) :
     mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(0, 6, 3));
@@ -418,7 +406,6 @@ VboBoxScene3.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnCyl,
         this.vboVerts - this.bgnCyl); 
-    mat4.copy(this.mvpMat, tmp);
 
     // 3)--------------------copy transforms for Sphere 3 in CScene.initScene(0)
     mat4.copy(this.mvpMat, tmp); 
@@ -430,6 +417,5 @@ VboBoxScene3.prototype.draw = function() {
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere,
         this.bgnCyl - this.bgnSphere); 
-    mat4.copy(this.mvpMat, tmp);
 
 }

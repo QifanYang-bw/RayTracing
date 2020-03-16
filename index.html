@@ -47,8 +47,8 @@
       .author{
         text-align: right;
       }
-      .width33{
-        width:33%;
+      .width25{
+        width:25%;
       }
       .stdHeight{
         height: 5em;
@@ -93,46 +93,86 @@
     <canvas id="webgl" width="800" height="500">
     Please use a browser that supports "canvas"
     </canvas>
-	<br> 
-	    <b>Ray Tracer: Press 't' to Trace!</b> (left: WebGL Scene Preview. Right: Ray-Traced Result.)
-	<br>
-	<br><!--
-		Added antialiasing; Changed ball color and corrected surface normal of the ball.
-	    <button type="button" onclick="onSuperSampleButton()" >Super-Sampling</button>
-	    <button type="button" onclick="onJitterButton()"      >Jitter</button>
-       onSuperSampleButton() and onJitterButton() 
-           modifies this span object's contents:
-	    <span id='AAreport'> 1 sample/pixel. No jitter. </span> 
-      	<br> -->
-	    <button type="button" onclick="onSceneButton()" >Change Scene</button>
-			<!-- onSceneButton() modifies this span object's contents: -->
-	    <span id='SceneReport'> Show Scene Number 0 </span> 
 
-	<br>
-	    Mouse Drag: Aims the camera (turns left,right,up,down)
-	<br>
-	    W/S; A/D keys: move camera forward/backwards; strafe left/right. Q/E: strafe down/up.
-	<br>
-<hr> <!-- Draw a horizontal-line separator------------------------------------------------------------->
-	Open Console, please: (right-click-->'Inspect Element'-->'Console' tab)
-	<br>
-	Try keyboard & mouse click/drag inside the canvas, and:
-		<br>
-	<!-- Make 'div' elements to hold changeable HTML made in our JavaScript file;
-		 (where? GUIbox-Lib.js, in keyboard & mouse fcns)
-	-->
-	<p>
-		<div id='KeyDown'> KeyDown...</div>
-		<div id='KeyMod'> KeyMod...<br><br><br> </div>
-		<div id='MouseResult0'> MouseResult0... </div> 
-		<div id='MouseDragResult'> MouseDragResult... </div>
-		<div id='MouseCanvas'> MouseCanvas... </div>
-  </p>
 
-	<!--	Load in the JavaScript libraries supplied by our textbook 
-			(Matsuda et al., 2013 WebGL Programming Guide) that help us
-			with WebGL programming:
-	-->
+    <div class="mainLocal">
+
+      <div class="textTitle spacebetween">
+        <div><h2>Project B: Ray Tracing</h2></div>
+        <div class="author">
+          Qifan Yang: QYL123
+        </div>
+      </div>
+
+      <div>
+        <h3> User Instructions <br /></h3>
+        <div id="sentence">
+
+          - Drag mouse to rotate the camera.
+          - WebGL Scene Preview on the left; Ray-Traced Result on the right.
+          - Use the control panel on the right side to adjust most of the settings.
+
+        </div>
+        <h3> Keyboard Instructions <br /></h3>
+        <div id="sentence">
+          - 'T': Generate Ray Tracing image on canvas. </br>
+          - 'C': Clear Ray Tracing image on canvas. </br>
+          </br>
+          - W/S keys: move camera forward/backwards; 
+          - A/D keys: strafe left/right;
+          - Q/E: strafe down/up.
+          </br>
+
+        </div>
+        <h3> Credits <br /></h3>
+        <div id="sentence">
+
+          - The initial code is given by Prof. John Tumblin from Northwestern University. </br>
+
+        </div>
+      </div>
+
+    	<!-- Make 'div' elements to hold changeable HTML made in our JavaScript file;
+    		 (where? GUIbox-Lib.js, in keyboard & mouse fcns)
+    	-->
+
+      <div id='DebugInfo' > 
+        <h3>
+          <h3>Debug Info</h3>
+        </h3>
+        <div class="spacebetween">
+          <div class='width25'>
+            <b> KeyPress Event </b><br>
+            <div id='KeyDown' class='stdHeight'> </div> <!-- myKeyDown() modifies this object -->
+          </div>
+          <div class='width25'>
+            <b> KeyPress Info </b>
+            <div id='KeyMod' class='stdHeight'></div>  <!-- myMouseMove() modifies this object -->
+          </div> 
+          <div class='width25'>
+            <b> Mouse Location </b>
+            <div id='MouseResult0' class='stdHeight'></div>  <!-- myMouseMove() modifies this object -->
+          </div> 
+          <div class='width25'>
+            <b> Mouse Drag Direction </b>
+            <div id='MouseDragResult' class='stdHeight'></div> <!-- myMouseUp() modifies this object -->
+           </div> 
+        </div>
+      </div>
+    </div>
+
+  	<!-- <p>
+  		<div id='KeyDown'> KeyDown...</div>
+  		<div id='KeyMod'> KeyMod...<br><br><br> </div>
+  		<div id='MouseResult0'> MouseResult0... </div> 
+  		<div id='MouseDragResult'> MouseDragResult... </div>
+  		<div id='MouseCanvas'> MouseCanvas... </div>
+    </p> -->
+
+  	<!--	Load in the JavaScript libraries supplied by our textbook 
+  			(Matsuda et al., 2013 WebGL Programming Guide) that help us
+  			with WebGL programming:
+  	-->
 
     <script src="lib/dat.gui.js"></script> 
     <script src="lib/webgl-utils.js"></script>
