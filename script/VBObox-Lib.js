@@ -149,9 +149,10 @@ function VboBoxPrev() {  // (JUST ONE instance: as 'preView' var
     this.appendWireSphere();           // create (default-resolution) sphere
     /* this.bgnCube = this.vboVerts;      // remember starting vertex for 'cube'
      this.appendWireCube();                 // YOU write these!
-     this.bgnCyl  = this.vboVerts;      // remember starting vertex for 'cylinder'
-     this.appendWireCylinder();
     // */
+
+    this.bgnCyl  = this.vboVerts;      // remember starting vertex for 'cylinder'
+    this.appendWireCylinder();
 
     this.FSIZE = this.vboContents.BYTES_PER_ELEMENT;
     // bytes req'd by 1 vboContents array element;
@@ -495,17 +496,37 @@ VboBoxPrev.prototype.polar2xyz = function (out4, fracEW, fracNS) {
         cNS, 1.0);      // z =        cos(NS); w=1.0  (point, not vec)
 }
 
-VboBoxPrev.prototype.appendWireSphere = function (NScount) {
-//==============================================================================
-// Create a set of vertices to draw grid of colored lines that form a 
-// sphere of radius 1, centered at x=y=z=0, when drawn with LINE_STRIP primitive
-// THEN:
-// Append the contents of vertSet[] to existing contents of the this.vboContents 
-// array; update this.vboVerts to include these new verts for drawing.
-// NOTE: use gl.drawArrays(gl.GL_LINES,...) to draw these vertices.
+// make our own local fcn to convert polar to rectangular coords:
+VboBoxPrev.prototype.polar2xyOnly = function (out4, fracEW, fracNS) {
+//------------------------------------------------------------------------------
+// Set the vec4 argument 'out4' to the 3D point on the unit sphere described by 
+// normalized longitude and lattitude angles: 0 <= fracEW, fracNS <= 1.
+// Define sphere as radius == 1 and centered at the origin, 
+//  with its 'north pole' point at (0,0,+1),        where fracNS = 1.0,
+//       its equator at the xy plane (where z==0)   where fracNS = 0.5,
+//   and it's 'south pole' point at (0,0,-1),       where fracNS = 0.0.
+// The sphere's equator, located at 'normalized lattitude' fracNS = 0.5,
+// defines the +x axis point as fracEW==0.0, and Longitude increases CCW or 
+// 'eastwards' around the equator to reach fracEW==0.25 at the +y axis and on up
+// to 0.5 at -x axis, on up to 0.75 at -y axis, and on up until we return to +x.
+    var sEW = Math.sin(2.0 * Math.PI * fracEW);
+    var cEW = Math.cos(2.0 * Math.PI * fracEW);
+    vec4.set(out4, cEW,      // x = cos(EW)sin(NS);
+        sEW,      // y = sin(EW)sin(NS);
+        fracNS * 2 - 1.0, 1.0);      // z =        cos(NS); w=1.0  (point, not vec)
+}
 
-// set # of vertices in each ring of constant lattitude  (EWcount) and
-// number of rings of constant lattitude (NScount)
+VboBoxPrev.prototype.appendWireSphere = function (NScount) {
+    //==============================================================================
+    // Create a set of vertices to draw grid of colored lines that form a 
+    // sphere of radius 1, centered at x=y=z=0, when drawn with LINE_STRIP primitive
+    // THEN:
+    // Append the contents of vertSet[] to existing contents of the this.vboContents 
+    // array; update this.vboVerts to include these new verts for drawing.
+    // NOTE: use gl.drawArrays(gl.GL_LINES,...) to draw these vertices.
+
+    // set # of vertices in each ring of constant lattitude  (EWcount) and
+    // number of rings of constant lattitude (NScount)
     if (NScount == undefined) NScount = 13;    // default value.
     if (NScount < 3) NScount = 3;              // enforce minimums
     EWcount = 2 * (NScount);
@@ -524,7 +545,7 @@ VboBoxPrev.prototype.appendWireSphere = function (NScount) {
     //    forms a circle of constant z (NSfrac determines the z value), and
     // --the EWcount arcs of NScount vertices each, where each arc 
     //    forms a half-circle from south-pole to north-pole at constant EWfrac
-//console.log("VboBoxPrev.appendLineSphere() vertCount, floatsPerVertex:", vertCount, ", ", this.floatsPerVertex);
+    //console.log("VboBoxPrev.appendLineSphere() vertCount, floatsPerVertex:", vertCount, ", ", this.floatsPerVertex);
 
     // Set Vertex Colors--------------------------------------
     // The sphere consists of horizontal rings and vertical half-circle arcs.
@@ -631,19 +652,148 @@ VboBoxPrev.prototype.appendWireSphere = function (NScount) {
 
 }
 
-VboBoxPrev.prototype.appendLineCube = function () {
-//==============================================================================
-// Create a set of vertices to draw grid of colored lines that form a unit
-// cube,  centered at x=y=z=0, (vertices at +/- 1 coordinates)
-// THEN append those vertices to this.vboContents array.
-// Draw these vertices with with gl.GL_LINES primitive.
+VboBoxPrev.prototype.appendWireCylinder = function (NScount) {
+    //==============================================================================
+    // Create a set of vertices to draw grid of colored lines that form a unit
+    // cube,  centered at x=y=z=0, (vertices at +/- 1 coordinates)
+    // THEN append those vertices to this.vboContents array.
+    // Draw these vertices with with gl.GL_LINES primitive.
 
-//
-//
-// 		********   YOU WRITE THIS! ********
-//
-//
-//
+
+    //==============================================================================
+    // Create a set of vertices to draw grid of colored lines that form a 
+    // sphere of radius 1, centered at x=y=z=0, when drawn with LINE_STRIP primitive
+    // THEN:
+    // Append the contents of vertSet[] to existing contents of the this.vboContents 
+    // array; update this.vboVerts to include these new verts for drawing.
+    // NOTE: use gl.drawArrays(gl.GL_LINES,...) to draw these vertices.
+
+    // set # of vertices in each ring of constant lattitude  (EWcount) and
+    // number of rings of constant lattitude (NScount)
+    if (NScount == undefined) NScount = 13;    // default value.
+    if (NScount < 3) NScount = 3;              // enforce minimums
+    EWcount = NScount;
+    console.log("VboBoxPrev.appendWireCylinder() EWcount, NScount:", EWcount, ", ", NScount);
+
+    //Set vertex contents:----------------------------------------
+    /*  ALREADY SET in VboBoxPrev constructor
+        this.floatsPerVertex = 8;  // x,y,z,w;  r,g,b,a values.
+    */
+
+    //Create (local) vertSet[] array-----------------------------
+    var vertCount = 2 * EWcount * NScount;
+    var vertSet = new Float32Array(vertCount * this.floatsPerVertex);
+
+    // This array holds two sets of vertices:
+    // --the NScount rings of EWcount vertices each, where each ring
+    //    forms a circle of constant z (NSfrac determines the z value), and
+    // --the EWcount arcs of NScount vertices each, where each arc 
+    //    forms a half-circle from south-pole to north-pole at constant EWfrac
+    //console.log("VboBoxPrev.appendLineSphere() vertCount, floatsPerVertex:", vertCount, ", ", this.floatsPerVertex);
+
+    // Set Vertex Colors--------------------------------------
+    // The sphere consists of horizontal rings and vertical half-circle arcs.
+    // Each North-to-South arc has constant fracEW and constant color, but that
+    // color varies linearly from EWbgnColr found at fracEW==0 up to EWendColr 
+    // found at fracEW==0.5 and then back down to EWbgnColr at fracEW==1.
+    // Each East-West ring has constant fracNS and constant color, but that 
+    // color varies linearly from NSbgnColr found at fracNS==0 (e.g. south pole)
+    // up to NSendColr found at fracNS==1 (north pole).
+    this.EWbgnColr = vec4.fromValues(1.0, 0.5, 0.0, 1.0);     // Orange
+    this.EWendColr = vec4.fromValues(0.0, 0.5, 1.0, 1.0);   // Cyan
+    this.NSbgnColr = vec4.fromValues(1.0, 1.0, 1.0, 1.0);     // White
+    this.NSendColr = vec4.fromValues(0.0, 1.0, 0.5, 1.0);   // White
+
+    // Compute how much the color changes between 1 arc (or ring) and the next:
+    var EWcolrStep = vec4.create();  // [0,0,0,0]
+    var NScolrStep = vec4.create();
+
+    vec4.subtract(EWcolrStep, this.EWendColr, this.EWbgnColr); // End - Bgn
+    vec4.subtract(NScolrStep, this.NSendColr, this.NSbgnColr);
+    vec4.scale(EWcolrStep, EWcolrStep, 2.0 / (EWcount - 1)); // double-step for arc colors
+    vec4.scale(NScolrStep, NScolrStep, 1.0 / (NScount - 1)); // single-step for ring colors
+
+    // Local vars for vertex-making loops-------------------
+    var EWgap = 1.0 / (EWcount - 1);          // vertex spacing in each ring of constant NS 
+    // (be sure last vertex doesn't overlap 1st)
+    var NSgap = 1.0 / (NScount - 1);        // vertex spacing in each North-South arc
+    // (1st vertex at south pole; last at north pole)
+    var EWint = 0;        // east/west integer (0 to EWcount) for current vertex,
+    var NSint = 0;        // north/south integer (0 to NScount) for current vertex.
+    var v = 0;          // vertex-counter, used for the entire sphere;
+    var idx = 0;        // vertSet[] array index.
+    var pos = vec4.create();    // vertex position.
+    var colrNow = vec4.create();   // color of the current arc or ring.
+
+    //----------------------------------------------------------------------------
+    // 1st BIG LOOP: makes all horizontal rings of constant NSfrac.
+    for (NSint = 0; NSint < NScount; NSint++) { // for every ring of constant NSfrac,
+        colrNow = vec4.scaleAndAdd(               // find the color of this ring;
+            colrNow, this.NSbgnColr, NScolrStep, NSint);
+        for (EWint = 0; EWint < EWcount; EWint++, v++, idx += this.floatsPerVertex) {
+            // for every vertex in this ring, find x,y,z,w;  r,g,b,a;
+            // and store them sequentially in vertSet[] array.
+            // Find vertex position from normalized lattitude & longitude:
+            this.polar2xyOnly(pos, // vec4 that holds vertex position in world-space x,y,z;
+                EWint * EWgap,  // normalized East/west longitude (from 0 to 1)
+                NSint * NSgap); // normalized North/South lattitude (from 0 to 1)      
+            // now set the vertex values in the array:
+            vertSet[idx] = pos[0];            // x value
+            vertSet[idx + 1] = pos[1];            // y value
+            vertSet[idx + 2] = pos[2];            // z value
+            vertSet[idx + 3] = 1.0;               // w (it's a point, not a vector)
+            vertSet[idx + 4] = colrNow[0];  // r
+            vertSet[idx + 5] = colrNow[1];  // g
+            vertSet[idx + 6] = colrNow[2];  // b
+            vertSet[idx + 7] = colrNow[3];  // a;
+        }
+    }
+
+    //----------------------------------------------------------------------------
+    // 2nd BIG LOOP: makes all vertical arcs of constant EWfrac.
+    for (EWint = 0; EWint < EWcount; EWint++) { // for every arc of constant EWfrac,
+        // find color of the arc:
+        if (EWint < EWcount / 2) {   // color INCREASES for first hemisphere of arcs:        
+            colrNow = vec4.scaleAndAdd(
+                colrNow, this.EWbgnColr, EWcolrStep, EWint);
+        } else {  // color DECREASES for second hemisphere of arcs:
+            colrNow = vec4.scaleAndAdd(
+                colrNow, this.EWbgnColr, EWcolrStep, EWcount - EWint);
+        }
+        for (NSint = 0; NSint < NScount; NSint++, v++, idx += this.floatsPerVertex) {
+            // for every vertex in this arc, find x,y,z,w;  r,g,b,a;
+            // and store them sequentially in vertSet[] array.
+            // Find vertex position from normalized lattitude & longitude:
+            this.polar2xyOnly(pos, // vec4 that holds vertex position in world-space x,y,z;
+                EWint * EWgap,  // normalized East/west longitude (from 0 to 1)
+                NSint * NSgap); // normalized North/South lattitude (from 0 to 1)      
+            // now set the vertex values in the array:
+            vertSet[idx] = pos[0];            // x value
+            vertSet[idx + 1] = pos[1];            // y value
+            vertSet[idx + 2] = pos[2];            // z value
+            vertSet[idx + 3] = 1.0;               // w (it's a point, not a vector)
+            vertSet[idx + 4] = colrNow[0];  // r
+            vertSet[idx + 5] = colrNow[1];  // g
+            vertSet[idx + 6] = colrNow[2];  // b
+            vertSet[idx + 7] = colrNow[3];  // a;
+        }
+    }
+    /*
+     // SIMPLEST-POSSIBLE vertSet[] array:
+      var vertSet = new Float32Array([    // a vertSet[] array of just 1 green line:
+          -1.00, 0.50, 0.0, 1.0,    0.0, 1.0, 0.0, 1.0, // GREEN
+           1.00, 0.50, 0.0, 1.0,    0.0, 1.0, 0.0, 1.0, // GREEN
+         ], this.vboContents.length);
+      vertCount = 2;
+    */
+    // Now APPEND this to existing VBO contents:
+    // Make a new array (local) big enough to hold BOTH vboContents & vertSet:
+    var tmp = new Float32Array(this.vboContents.length + vertSet.length);
+    tmp.set(this.vboContents, 0);     // copy old VBOcontents into tmp, and
+    tmp.set(vertSet, this.vboContents.length); // copy new vertSet just after it.
+    this.vboVerts += vertCount;       // find number of verts in both.
+    this.vboContents = tmp;           // REPLACE old vboContents with tmp
+
 }
 
 VboBoxPrev.prototype.init = function () {
@@ -943,7 +1093,7 @@ VboBoxPrev.prototype.draw = function () {
         // choices: gl.POINTS, gl.LINES, gl.LINE_STRIP, gl.LINE_LOOP, 
         //          gl.TRIANGLES, gl.TRIANGLE_STRIP, ...
         this.bgnSphere, 	// location of 1st vertex to draw;
-        this.vboVerts - this.bgnSphere); // How many vertices to draw
+        this.bgnCyl - this.bgnSphere); // How many vertices to draw
     mat4.copy(this.mvpMat, tmp); // RESTORE current value (needs push-down stack!)  
 }
 

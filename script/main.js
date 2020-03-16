@@ -52,7 +52,7 @@ var gui = new GUIbox(); // Holds all (Graphical) User Interface fcns & vars, for
                         // gui.camEyePt, gui.camAimPt, gui.camUpVec    
 //-----For the VBOs & Shaders:-----------------
 
-preViewArray = [new VboBoxPrev(), new VboBoxScene1(), new VboBoxScene1(), new VboBoxScene1()];
+preViewArray = [new VboBoxPrev(), new VboBoxScene1(), new VboBoxScene2(), new VboBoxScene1()];
 // preView = new VboBoxScene1();		// For WebGLpreview: holds one VBO and its shaders
 rayView = new VboBoxTrace();		// for displaying the ray-tracing results.
 

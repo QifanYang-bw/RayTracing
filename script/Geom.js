@@ -729,22 +729,13 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
         // only goes on when both hitpoints is larger than 0
 
         if ((s1 > 0) + (s2 > 0) == 2) {
-        // if (s1 > 0 || s2 > 0) {
             var u;
 
             if (s1 > s2) u = s2; else u = s1;
             // u contains the solution
 
-
             // check whether z axis is within range (-b, b), i.e. (-1, 1)
             var t = rayT.orig[2] + rayT.dir[2] * u;
-
-
-    if (printed2 < 10){
-        //if (printed2 % 10 == 0) 
-            console.log("u sample :", u, t);
-        printed2++;
-    }
 
             if (t >= -1 && t <= 1) {
                 // confirms collision with tube itself (not the disk!)
