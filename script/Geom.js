@@ -49,6 +49,9 @@ function CGeom(shapeSelect) {
 
     this.mat = null;
 
+    // For children assigns
+    this.item = [];
+
     // Get clever:  create 'traceMe()' function that calls the tracing function
     // needed by the shape held in this CGeom object.
     switch (this.shapeType) {
@@ -96,6 +99,22 @@ function CGeom(shapeSelect) {
             this.traceMe = function (inR, hit) {
                 this.traceCyl(inR, hit);
             };
+
+            // Standard Cylinder: radius 1, height 2 (from -1 to 1)
+
+            // Cylinder consists of a tube (with length) and two disks
+            this.topDisk = new CGeom(RT_DISK);
+            this.topDisk.setIdent();                   // start in world coord axes
+            this.topDisk.rayTranslate(0, 0, 1);         // move drawing axes 
+            this.topDisk.rayScale(0.5, 0.5, 1);         // move drawing axes 
+
+            this.botDisk = new CGeom(RT_DISK);
+            this.botDisk.setIdent();                   // start in world coord axes
+            this.botDisk.rayTranslate(0, 0, -1);         // move drawing axes 
+            this.botDisk.rayScale(0.5, 0.5, 1);         // move drawing axes 
+
+            this.item = [this.topDisk, this.botDisk];
+
             break;
         case RT_TRIANGLE://---------------------------------------------------------
             //set the ray-tracing function (so we call it using item[i].traceMe() )
@@ -135,6 +154,10 @@ CGeom.prototype.setMaterial = function (matID) {
 
     this.mat = new CMaterial(matID);
     console.log('Set material to ' + matID);
+
+    for (var i = 0; i < this.item.length; i++) {
+        this.item[i].setMaterial(matID);
+    }
 }
 
 CGeom.prototype.setIdent = function () {
@@ -243,43 +266,43 @@ CGeom.prototype.rayScale = function (sx, sy, sz) {
 }
 
 CGeom.prototype.traceGrid = function (inRay, myHit) {
-//==============================================================================
-// Find intersection of CRay object 'inRay' with grid-plane at z== 0, and
-// if we find a ray/grid intersection CLOSER than CHit object 'hitMe', update
-// the contents of 'hitMe' with all the new hit-point information.
-// NO return value. 
-// (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
-// Set CHit.hitNum ==  -1 if ray MISSES the disk
-//                 ==   0 if ray hits the disk BETWEEN lines
-//                 ==   1 if ray hits the disk ON the lines  
+    //==============================================================================
+    // Find intersection of CRay object 'inRay' with grid-plane at z== 0, and
+    // if we find a ray/grid intersection CLOSER than CHit object 'hitMe', update
+    // the contents of 'hitMe' with all the new hit-point information.
+    // NO return value. 
+    // (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
+    // Set CHit.hitNum ==  -1 if ray MISSES the disk
+    //                 ==   0 if ray hits the disk BETWEEN lines
+    //                 ==   1 if ray hits the disk ON the lines  
 
-// HOW TO TRACE A GROUND-PLANE--------------------------------------------------
-// 1) we parameterize the ray by 't', so that we can find any point on the
-// ray by:
-//          Ray(t) = ray.orig + t*ray.dir
-// To find where the ray hit the plane, solve for t where Ray(t) = x,y,zGrid:
-// Re-write:
-//      Ray(t0).x = ray.orig[0] + t0*ray.dir[0] = x-value at hit-point (UNKNOWN!)
-//      Ray(t0).y = ray.orig[1] + t0*ray.dir[1] = y-value at hit-point (UNKNOWN!)
-//      Ray(t0).z = ray.orig[2] + t0*ray.dir[2] = zGrid    (we KNOW this one!)
-//
-//  solve for t0:   t0 = (zGrid - ray.orig[2]) / ray.dir[2]
-//  From t0 we can find x,y value at the hit-point too.
-//  Wait wait wait --- did we consider ALL possibilities?  No, not really:
-//  If t0 <0, we can only hit the plane at points BEHIND our camera;
-//  thus the ray going FORWARD through the camera MISSED the plane!.
-//
-// 2) Our grid-plane exists for all x,y, at the value z=zGrid, and is covered by
-//    a grid of lines whose width is set by 'linewidth'.  The repeated lines of 
-//    constant-x have spacing (repetition period) of xgap, and the lines of
-//    constant-y have spacing of ygap.
-//    GIVEN a hit-point (x,y,zGrid) on the grid-plane, find the color by:
-//         if((x/xgap) has fractional part < linewidth  *OR*
-//            (y/ygap) has fractional part < linewidth), you hit a line on
-//            the grid. Use 'lineColor'.
-//        otherwise, the ray hit BETWEEN the lines; use 'gapColor'
+    // HOW TO TRACE A GROUND-PLANE--------------------------------------------------
+    // 1) we parameterize the ray by 't', so that we can find any point on the
+    // ray by:
+    //          Ray(t) = ray.orig + t*ray.dir
+    // To find where the ray hit the plane, solve for t where Ray(t) = x,y,zGrid:
+    // Re-write:
+    //      Ray(t0).x = ray.orig[0] + t0*ray.dir[0] = x-value at hit-point (UNKNOWN!)
+    //      Ray(t0).y = ray.orig[1] + t0*ray.dir[1] = y-value at hit-point (UNKNOWN!)
+    //      Ray(t0).z = ray.orig[2] + t0*ray.dir[2] = zGrid    (we KNOW this one!)
+    //
+    //  solve for t0:   t0 = (zGrid - ray.orig[2]) / ray.dir[2]
+    //  From t0 we can find x,y value at the hit-point too.
+    //  Wait wait wait --- did we consider ALL possibilities?  No, not really:
+    //  If t0 <0, we can only hit the plane at points BEHIND our camera;
+    //  thus the ray going FORWARD through the camera MISSED the plane!.
+    //
+    // 2) Our grid-plane exists for all x,y, at the value z=zGrid, and is covered by
+    //    a grid of lines whose width is set by 'linewidth'.  The repeated lines of 
+    //    constant-x have spacing (repetition period) of xgap, and the lines of
+    //    constant-y have spacing of ygap.
+    //    GIVEN a hit-point (x,y,zGrid) on the grid-plane, find the color by:
+    //         if((x/xgap) has fractional part < linewidth  *OR*
+    //            (y/ygap) has fractional part < linewidth), you hit a line on
+    //            the grid. Use 'lineColor'.
+    //        otherwise, the ray hit BETWEEN the lines; use 'gapColor'
 
-//------------------ Transform 'inRay' by this.worldRay2model matrx to make rayT
+    //------------------ Transform 'inRay' by this.worldRay2model matrx to make rayT
     var rayT = new CRay();    // create a local transformed-ray variable.
     /*
     //  FOR TESTING ONLY:
@@ -290,7 +313,7 @@ CGeom.prototype.traceGrid = function (inRay, myHit) {
     vec4.transformMat4(rayT.dir, inRay.dir, this.worldRay2model);
 
     // Now use transformed ray 'rayT' for our ray-tracing.
-//------------------End ray-transform.
+    //------------------End ray-transform.
 
     // find ray/grid-plane intersection: t0 == value where ray hits plane at z=0.
     var t0 = (-rayT.orig[2]) / rayT.dir[2];
@@ -342,7 +365,7 @@ CGeom.prototype.traceGrid = function (inRay, myHit) {
     // keep >0 to form double-width line at yaxis.
     // Adding linewidth no longer causes double width line
 
-//console.log("loc",loc, "loc%1", loc%1, "lineWidth", this.lineWidth);
+    //console.log("loc",loc, "loc%1", loc%1, "lineWidth", this.lineWidth);
     if (loc % 1 < this.lineWidth) {    // fractional part of loc < linewidth? 
         myHit.hitNum = 1;            // YES. rayT hit a line of constant-x
         return;
@@ -363,20 +386,20 @@ CGeom.prototype.traceGrid = function (inRay, myHit) {
 }
 
 CGeom.prototype.traceDisk = function (inRay, myHit) {
-//==============================================================================
-// Find intersection of CRay object 'inRay' with a flat, circular disk in the
-// xy plane, centered at the origin, with radius this.diskRad,
-// and store the ray/disk intersection information on CHit object 'hitMe'.
-// NO return value. 
-// (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
-// Set CHit.hitNum ==  -1 if ray MISSES the disk
-//                 ==   0 if ray hits the disk BETWEEN lines
-//                 ==   1 if ray hits the disk ON the lines
-//
-//  Uses the EXACT SAME steps developed for this.traceGrid(), EXCEPT:
-//  if the hit-point is > diskRad distance from origin, the ray MISSED the disk.
+    //==============================================================================
+    // Find intersection of CRay object 'inRay' with a flat, circular disk in the
+    // xy plane, centered at the origin, with radius this.diskRad,
+    // and store the ray/disk intersection information on CHit object 'hitMe'.
+    // NO return value. 
+    // (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
+    // Set CHit.hitNum ==  -1 if ray MISSES the disk
+    //                 ==   0 if ray hits the disk BETWEEN lines
+    //                 ==   1 if ray hits the disk ON the lines
+    //
+    //  Uses the EXACT SAME steps developed for this.traceGrid(), EXCEPT:
+    //  if the hit-point is > diskRad distance from origin, the ray MISSED the disk.
 
-//------------------ Transform 'inRay' by this.worldRay2model matrix;
+    //------------------ Transform 'inRay' by this.worldRay2model matrix;
     var rayT = new CRay();    // create a local transformed-ray variable.
     vec4.copy(rayT.orig, inRay.orig);   // memory-to-memory copy. 
     vec4.copy(rayT.dir, inRay.dir);
@@ -385,7 +408,7 @@ CGeom.prototype.traceDisk = function (inRay, myHit) {
     // also a change to inRay (!!).
     vec4.transformMat4(rayT.orig, inRay.orig, this.worldRay2model);
     vec4.transformMat4(rayT.dir, inRay.dir, this.worldRay2model);
-//------------------End ray-transform.
+    //------------------End ray-transform.
 
     // find ray/disk intersection: t0 == value where ray hits the plane at z=0.
     var t0 = -rayT.orig[2] / rayT.dir[2];   // (disk is in z==0 plane)  
@@ -432,7 +455,7 @@ CGeom.prototype.traceDisk = function (inRay, myHit) {
     vec4.transformMat4(myHit.surfNorm, vec4.fromValues(0, 0, 1, 0), this.normal2world);
     vec4.normalize(myHit.surfNorm, myHit.surfNorm);
 
-//-------------find hit-point color:----------------
+    //-------------find hit-point color:----------------
     var loc = myHit.modelHitPt[0] / this.xgap;// how many 'xgaps' from the origin?
     if (myHit.modelHitPt[0] < 0) loc = -loc + this.lineWidth;   // keep >0 to form double-width line at yaxis.
     if (loc % 1 < this.lineWidth) {    // fractional part of loc < linewidth? 
@@ -451,17 +474,17 @@ CGeom.prototype.traceDisk = function (inRay, myHit) {
 
 CGeom.prototype.traceSphere = function (inRay, myHit) {
 //==============================================================================
-// Find intersection of CRay object 'inRay' with sphere of radius 1 centered at
-// the origin in the 'model' coordinate system. 
-//
-// (If you want different a radius, position, orientation or scaling in the
-// world coordinate system, use the ray-transforming functions, 
-//  e.g. rayTranslate(), rayRotate(), ...)
+    // Find intersection of CRay object 'inRay' with sphere of radius 1 centered at
+    // the origin in the 'model' coordinate system. 
+    //
+    // (If you want different a radius, position, orientation or scaling in the
+    // world coordinate system, use the ray-transforming functions, 
+    //  e.g. rayTranslate(), rayRotate(), ...)
 
-// (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
-// Set CHit.hitNum ==  -1 if ray MISSES the sphere;
-//                 ==   0 if ray hits the sphere BELOW z==0 equator,
-//                 ==   1 if ray hits the sphere ABOVE z==0 equator.
+    // (old versions returned an integer 0,1, or -1: see hitMe.hitNum)
+    // Set CHit.hitNum ==  -1 if ray MISSES the sphere;
+    //                 ==   0 if ray hits the sphere BELOW z==0 equator,
+    //                 ==   1 if ray hits the sphere ABOVE z==0 equator.
 
     // DIAGNOSTIC:----------------------------------------------------------------
     /*
@@ -472,11 +495,11 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     */
     // END DIAGNOSTIC:------------------------------------------------------------
 
-// Half-Chord Method===================
-//(see Ray-Tracing Lecture Notes D)
-//for finding ray/sphere intersection
-//=====================================
-//------------------ Step 1: transform 'inRay' by this.worldRay2model matrix;
+    // Half-Chord Method===================
+    //(see Ray-Tracing Lecture Notes D)
+    //for finding ray/sphere intersection
+    //=====================================
+    //------------------ Step 1: transform 'inRay' by this.worldRay2model matrix;
     var rayT = new CRay();    // to create 'rayT', our local model-space ray.
     vec4.copy(rayT.orig, inRay.orig);   // memory-to-memory copy. 
     vec4.copy(rayT.dir, inRay.dir);
@@ -486,7 +509,7 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     vec4.transformMat4(rayT.orig, inRay.orig, this.worldRay2model);
     vec4.transformMat4(rayT.dir, inRay.dir, this.worldRay2model);
 
-//------------------ Step 2: Test 1st triangle. Did ray MISS sphere entirely?
+    //------------------ Step 2: Test 1st triangle. Did ray MISS sphere entirely?
     // Create r2s vector that reaches FROM ray's start-point TO the sphere center.
     //  (subtract: model-space origin POINT - rayT origin POINT):
     // (remember, in homogeneous coords w=1 for points, =0 for vectors)
@@ -658,3 +681,170 @@ CGeom.prototype.traceSphere = function (inRay, myHit) {
     //      ====================================
     //  Use the t1 hit point, as only t1 is AHEAD of the ray's origin.
 }
+
+// Ref: http://cosinekitty.com/raytrace/chapter11_reorientable.html#sect_11_8
+CGeom.prototype.traceCyl = function (inRay, myHit) {
+    //transform 'inRay' by this.worldRay2model matrix;
+    var rayT = new CRay();    // to create 'rayT', our local model-space ray.
+    vec4.copy(rayT.orig, inRay.orig);   // memory-to-memory copy. 
+    vec4.copy(rayT.dir, inRay.dir);
+    // (DON'T do this: rayT = inRay; // that sets rayT
+    // as a REFERENCE to inRay. Any change to rayT is
+    // also a change to inRay (!!).
+
+    vec4.transformMat4(rayT.orig, inRay.orig, this.worldRay2model);
+    vec4.transformMat4(rayT.dir, inRay.dir, this.worldRay2model);
+
+    // Solve for tube quadratic equations
+    var cA = rayT.dir[0] * rayT.dir[0] + rayT.dir[1] * rayT.dir[1];
+    var cB = 2 * (rayT.orig[0] * rayT.dir[0] + rayT.orig[1] * rayT.dir[1]);
+    var cC = rayT.orig[0] * rayT.orig[0] + rayT.orig[1] * rayT.orig[1] - 1; // 1 is the radius
+
+    var discr2 = cB * cB - 4 * cA * cC;
+
+    var updated = false;
+
+    // if (printed < 300000){
+    //     if (printed % 10000 == 0) 
+    //         console.log("calc sample :", cA, cB, cC, cB * cB, 4 * cA * cC, rayT);
+    //     printed++;
+    // }
+
+    if (discr2 > 0) {
+        // we have solutions
+
+        var discr = Math.sqrt(discr2);
+        var s1 = (-cB + discr) / (2 * cA);
+        var s2 = (-cB - discr) / (2 * cA);
+
+        // This could happen in legit ways
+        // if (s1 > 0 && s2 < 0 || s1 < 0 && s2 > 0) {
+            // only one solution; the origin is inside the tube
+            // causes an error
+
+            // console.log("CGeom.traceCyl() ERROR! rayT origin at or inside cylinder tube! ray info:" + inRay + "\n\n");
+            // return;
+        // }
+
+        // only goes on when both hitpoints is larger than 0
+
+        if ((s1 > 0) + (s2 > 0) == 2) {
+        // if (s1 > 0 || s2 > 0) {
+            var u;
+
+            if (s1 > s2) u = s2; else u = s1;
+            // u contains the solution
+
+
+            // check whether z axis is within range (-b, b), i.e. (-1, 1)
+            var t = rayT.orig[2] + rayT.dir[2] * u;
+
+
+    if (printed2 < 10){
+        //if (printed2 % 10 == 0) 
+            console.log("u sample :", u, t);
+        printed2++;
+    }
+
+            if (t >= -1 && t <= 1) {
+                // confirms collision with tube itself (not the disk!)
+
+                updated = true;
+
+                // YES! we found a better hit-point!
+                // Update myHit to describe it------------------------------------------------
+                myHit.t0 = u;          // record ray-length, and
+                myHit.hitGeom = this;      // record this CGeom object as the one we hit, and
+                
+                // ***IF*** you're tracing a shadow ray you can stop right here: we know
+                // that this ray's path to the light-source is blocked by this CGeom object.
+                
+                if (inRay.isShadowRay) {
+                    return;
+                }
+                
+                // Compute the x,y,z,w point where rayT hit the sphere in MODEL coords:
+                // vec4.scaleAndAdd(out,a,b,scalar) sets out = a + b*scalar
+                vec4.scaleAndAdd(myHit.modelHitPt, rayT.orig, rayT.dir, myHit.t0);
+                // Compute the x,y,z,w point where inRay hit the grid-plane in WORLD coords:
+                vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
+                // set 'viewN' member to the reversed, normalized inRay.dir vector:
+                vec4.negate(myHit.viewN, inRay.dir);
+                // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
+                // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
+                vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
+
+
+                // Now find surface normal: 
+                // but we need to TRANSFORM the normal to world-space, & re-normalize it.
+
+                // surfNorm of a tube is the (x, y, 0) value of the hitpoint
+
+                var t4 = vec4.create();
+                vec4.set(t4, myHit.modelHitPt[0], myHit.modelHitPt[1], 0, 0);
+
+
+                vec4.transformMat4(myHit.surfNorm, t4, this.normal2world);
+                vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+
+                vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+
+            }
+        } 
+    } 
+    if (!updated) {
+        this.topDisk.traceMe(rayT, myHit);
+        this.botDisk.traceMe(rayT, myHit);
+
+        if (myHit.hitGeom == this.topDisk) {
+            // Recalculate everything except modelHitPoint
+
+            vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
+            // set 'viewN' member to the reversed, normalized inRay.dir vector:
+            vec4.negate(myHit.viewN, inRay.dir);
+            // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
+            // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
+            vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
+
+            // translate surfNorm once more
+            vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
+            vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+
+            vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+        }
+        if (myHit.hitGeom == this.botDisk) {
+            // Recalculate everything except modelHitPoint
+
+            vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
+            // set 'viewN' member to the reversed, normalized inRay.dir vector:
+            vec4.negate(myHit.viewN, inRay.dir);
+            // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
+            // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
+            vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
+
+            // translate surfNorm once more
+            vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
+            vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+
+            vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+        }
+    }
+    
+}
+
+// function temporarySolver(rayT) {
+//     var cA = rayT.dir[0] * rayT.dir[0] + rayT.dir[1] + rayT.dir[1];
+//     var cB = 2 * (rayT.orig[0] * rayT.dir[0] + rayT.orig[1] * rayT.dir[1]);
+//     var cC = rayT.orig[0] * rayT.orig[0] + rayT.orig[1] + rayT.orig[1] - 1; // 1 is tha radius   
+
+//     if (discr2 > 0) {
+//         // we have solutions
+
+//         var discr = Math.sqrt(discr2);
+//         var s1 = (-cB + discr) / (2 * cA);
+//         var s2 = (-cB - discr) / (2 * cA);
+//         return [s1, s2];
+//     } else {
+//         return NaN;
+//     }
+// }

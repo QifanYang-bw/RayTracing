@@ -339,6 +339,8 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].rayRotate(0.25 * Math.PI, 1, 0, 0); // rot 45deg on x axis to face us
             this.item[iNow].rayRotate(0.25 * Math.PI, 0, 0, 1); // z-axis rotate 45deg.
 
+            this.item[iNow].rayScale(1.5, 1.5, 1);        // 1.5x of its size
+
 
             //-----Disk 2------ 
             this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
@@ -412,11 +414,29 @@ CScene.prototype.initScene = function (num) {
             
             break;
         case 2:
-            //
-            //
-            // another: SCENE 2 SETUP   
-            console.log("JT_tracer0-Scene file: CScene.initScene(", num, ") NOT YET IMPLEMENTED.");    //
-            this.initScene(0); // use default scene
+            // Set default sky color:
+            this.skyColor = vec4.fromValues(0.6, 0.6, 0.6, 1.0);  // cyan/bright blue
+            
+            // //---Ground Plane-----
+            // // draw this in world-space; no transforms!
+            // this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
+            // iNow = this.item.length - 1;               // get its array index.
+            //                                            // use default colors.
+            //                                            // no transforms needed.
+            // vec4.set(this.item[iNow].gapColor, 0.05, 0.05, 0.05, 1.0); // 
+            // vec4.set(this.item[iNow].lineColor, 0.95, 0.95, 0.95, 1.0);  // 
+
+            //-----Cylinder 1-----
+            this.item.push(new CGeom(RT_CYLINDER));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(0, 2.0, 0.8);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
+
+
             //
             break;
         default:    // nonsensical 'sceneNum' value?

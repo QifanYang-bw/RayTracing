@@ -2,9 +2,89 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Project B: Ray Tracing</title>  <!-- Keep it short: title appears on browser tab-->
-		<!-- OPTIONAL: let's surround canvas with a thin blue outline -->
-		<style type =" text/ css"> canvas {border: 2px dotted blue;} </style>
+    <title>Project B: Ray Tracing</title>
+    <style>
+      body {
+        background: #191919;
+        margin: 0 0;
+
+        color: #f3f3f3;
+      }
+      #webgl {
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .mainLocal{
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 50px;
+
+        color: #d4d4d3;
+      }
+
+      .framework{
+        border: 20px solid #947278;
+        background: #f0f0f0;
+
+        font-size: 16px;
+        padding: 20px;
+        max-width:900px;
+        width: 100%;
+        margin: 0px auto;
+      }
+      .textTitle{
+        overflow: hidden;
+        margin: 0 0 20px 0;
+      }
+      .textTitle, h3{
+        color: #f0f0f0;
+      }
+      .spacebetween{
+        display: flex;
+        justify-content: space-between;
+      }
+      .author{
+        text-align: right;
+      }
+      .width33{
+        width:33%;
+      }
+      .stdHeight{
+        height: 5em;
+      }
+      .canvas{
+        border: 5px solid #bdc3c7;
+
+        /*margin: 20px 20px; */
+      }
+
+      /* for dat.gui */
+      .save-row{
+        background-color: #191919!important;
+      }
+
+      .button{
+        background-color: #787878!important;
+      }/*
+      .dg.main{
+        margin-right: 0px!important;
+      }*/
+/*      .button {
+        color: #614E51;
+        font-size : 15px;
+        text-decoration: none;
+        background: #e0e0e0;
+        padding: 10px;
+        border: 4px solid #614E51 ;
+        display: inline-block;
+        transition: all 0.4s ease 0s;
+      }
+
+      .button:active {
+        border: 4px solid #ccbcbe;
+      }*/
+    </style>
   </head>
 
 	<!--	Create the HTML5 'canvas' element in which we will run WebGL
