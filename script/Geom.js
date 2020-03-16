@@ -736,8 +736,8 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
 
             // check whether z axis is within range (-b, b), i.e. (-1, 1)
             var t = rayT.orig[2] + rayT.dir[2] * u;
-
-            if (t >= -1 && t <= 1) {
+            // ... and u is better than previous results
+            if (t >= -1 && t <= 1 && u < myHit.t0) {
                 // confirms collision with tube itself (not the disk!)
 
                 updated = true;
@@ -784,41 +784,28 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
         } 
     } 
     if (!updated) {
-        this.topDisk.traceMe(rayT, myHit);
-        this.botDisk.traceMe(rayT, myHit);
 
-        if (myHit.hitGeom == this.topDisk) {
-            // Recalculate everything except modelHitPoint
+        for (var i = 0; i < this.item.length; i++) {
+            this.item[i].traceMe(rayT, myHit);
 
-            vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
-            // set 'viewN' member to the reversed, normalized inRay.dir vector:
-            vec4.negate(myHit.viewN, inRay.dir);
-            // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
-            // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
-            vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
+            if (myHit.hitGeom == this.item[i] && !inRay.isShadowRay) {
+                // Recalculate everything except modelHitPoint
 
-            // translate surfNorm once more
-            vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
-            vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+                vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
+                // set 'viewN' member to the reversed, normalized inRay.dir vector:
+                vec4.negate(myHit.viewN, inRay.dir);
+                // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
+                // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
+                vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
 
-            vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+                // translate surfNorm once more
+                vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
+                vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+
+                vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+            }
         }
-        if (myHit.hitGeom == this.botDisk) {
-            // Recalculate everything except modelHitPoint
 
-            vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
-            // set 'viewN' member to the reversed, normalized inRay.dir vector:
-            vec4.negate(myHit.viewN, inRay.dir);
-            // ( CAREFUL! vec4.negate() changes sign of ALL components: x,y,z,w !!
-            // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
-            vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
-
-            // translate surfNorm once more
-            vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
-            vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
-
-            vec4.normalize(myHit.surfNorm, myHit.surfNorm);
-        }
     }
     
 }

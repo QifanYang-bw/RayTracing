@@ -130,7 +130,7 @@ var SettingsManager = function () {
 
     this.SceneSelection = 2;
 
-    this.AllowShadow = false;
+    this.AllowShadow = true;
     this.TraceDepth = 0;
     
     this.SuperSampling = false;

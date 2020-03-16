@@ -417,14 +417,14 @@ CScene.prototype.initScene = function (num) {
             // Set default sky color:
             this.skyColor = vec4.fromValues(0.6, 0.6, 0.6, 1.0);  // cyan/bright blue
             
-            // //---Ground Plane-----
-            // // draw this in world-space; no transforms!
-            // this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
-            // iNow = this.item.length - 1;               // get its array index.
-            //                                            // use default colors.
-            //                                            // no transforms needed.
-            // vec4.set(this.item[iNow].gapColor, 0.05, 0.05, 0.05, 1.0); // 
-            // vec4.set(this.item[iNow].lineColor, 0.95, 0.95, 0.95, 1.0);  // 
+            //---Ground Plane-----
+            // draw this in world-space; no transforms!
+            this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
+            iNow = this.item.length - 1;               // get its array index.
+                                                       // use default colors.
+                                                       // no transforms needed.
+            vec4.set(this.item[iNow].gapColor, 0.05, 0.05, 0.05, 1.0); // 
+            vec4.set(this.item[iNow].lineColor, 0.95, 0.95, 0.95, 1.0);  // 
 
             //-----Cylinder 1-----
             this.item.push(new CGeom(RT_CYLINDER));       // Append sphere to item[] &
@@ -432,7 +432,7 @@ CScene.prototype.initScene = function (num) {
             // Initially leave sphere at the origin. Once you see it, then
             // move it to a more-sensible location:
             this.item[iNow].setIdent();                   // start in world coord axes
-            this.item[iNow].rayTranslate(0, 2.0, 0.8);  // move rightwards (+x),
+            this.item[iNow].rayTranslate(0, 2.0, 1.2);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
 

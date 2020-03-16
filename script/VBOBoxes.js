@@ -134,7 +134,7 @@ VboBoxScene2.prototype.draw = function() {
 
     // 1)--------------------copy transforms for Cylinder 1 in CScene.initScene(2)
     mat4.copy(this.mvpMat, tmp); 
-    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(0, 2.0, 0.8));
+    mat4.translate(this.mvpMat, this.mvpMat, vec3.fromValues(0, 2.0, 1.2));
     gl.uniformMatrix4fv(this.u_mvpMatLoc, false, this.mvpMat);
     mat4.copy(this.mvpMat, tmp); 
     gl.drawArrays(gl.LINE_STRIP, 
