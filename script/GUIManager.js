@@ -46,7 +46,7 @@ function initGUI() {
     
     var fSample = datgui.addFolder('Sampling');
     fSample.add(settings, 'SuperSampling');
-    fSample.add(settings, 'SampleSize', 1, 5).step(1);
+    fSample.add(settings, 'SampleSize', 1, 8).step(1);
     fSample.add(settings, 'Jitter');
 
     var fLights = datgui.addFolder('Lights');
@@ -128,12 +128,12 @@ var SettingsManager = function () {
 
     }
 
-    this.SceneSelection = 2;
+    this.SceneSelection = 3;
 
     this.AllowShadow = true;
-    this.TraceDepth = 0;
+    this.TraceDepth = 2;
     
-    this.SuperSampling = false;
+    this.SuperSampling = true;
     this.SampleSize = 2;
     this.Jitter = true;
 

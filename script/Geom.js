@@ -153,7 +153,7 @@ CGeom.prototype.setMaterial = function (matID) {
 // Set up material for CGeom, replacing gapColor and lineColor
 
     this.mat = new CMaterial(matID);
-    console.log('Set material to ' + matID);
+    // console.log('Set material to ' + matID);
 
     for (var i = 0; i < this.item.length; i++) {
         this.item[i].setMaterial(matID);
@@ -704,27 +704,12 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
 
     var updated = false;
 
-    // if (printed < 300000){
-    //     if (printed % 10000 == 0) 
-    //         console.log("calc sample :", cA, cB, cC, cB * cB, 4 * cA * cC, rayT);
-    //     printed++;
-    // }
-
     if (discr2 > 0) {
         // we have solutions
 
         var discr = Math.sqrt(discr2);
         var s1 = (-cB + discr) / (2 * cA);
         var s2 = (-cB - discr) / (2 * cA);
-
-        // This could happen in legit ways
-        // if (s1 > 0 && s2 < 0 || s1 < 0 && s2 > 0) {
-            // only one solution; the origin is inside the tube
-            // causes an error
-
-            // console.log("CGeom.traceCyl() ERROR! rayT origin at or inside cylinder tube! ray info:" + inRay + "\n\n");
-            // return;
-        // }
 
         // only goes on when both hitpoints is larger than 0
 
@@ -739,7 +724,6 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
             // ... and u is better than previous results
             if (t >= -1 && t <= 1 && u < myHit.t0) {
                 // confirms collision with tube itself (not the disk!)
-
                 updated = true;
 
                 // YES! we found a better hit-point!
@@ -765,7 +749,6 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
                 // inRay.dir MUST be a vector, not a point, to ensure w sign has no effect)
                 vec4.normalize(myHit.viewN, myHit.viewN); // ensure a unit-length vector.
 
-
                 // Now find surface normal: 
                 // but we need to TRANSFORM the normal to world-space, & re-normalize it.
 
@@ -773,7 +756,6 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
 
                 var t4 = vec4.create();
                 vec4.set(t4, myHit.modelHitPt[0], myHit.modelHitPt[1], 0, 0);
-
 
                 vec4.transformMat4(myHit.surfNorm, t4, this.normal2world);
                 vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)

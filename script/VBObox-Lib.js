@@ -530,7 +530,7 @@ VboBoxPrev.prototype.appendWireSphere = function (NScount) {
     if (NScount == undefined) NScount = 13;    // default value.
     if (NScount < 3) NScount = 3;              // enforce minimums
     EWcount = 2 * (NScount);
-    console.log("VboBoxPrev.appendLineSphere() EWcount, NScount:", EWcount, ", ", NScount);
+    // console.log("VboBoxPrev.appendLineSphere() EWcount, NScount:", EWcount, ", ", NScount);
 
     //Set vertex contents:----------------------------------------
     /*  ALREADY SET in VboBoxPrev constructor
@@ -673,7 +673,7 @@ VboBoxPrev.prototype.appendWireCylinder = function (NScount) {
     if (NScount == undefined) NScount = 13;    // default value.
     if (NScount < 3) NScount = 3;              // enforce minimums
     EWcount = NScount;
-    console.log("VboBoxPrev.appendWireCylinder() EWcount, NScount:", EWcount, ", ", NScount);
+    // console.log("VboBoxPrev.appendWireCylinder() EWcount, NScount:", EWcount, ", ", NScount);
 
     //Set vertex contents:----------------------------------------
     /*  ALREADY SET in VboBoxPrev constructor

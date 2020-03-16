@@ -292,6 +292,9 @@ CScene.prototype.initScene = function (num) {
 //     == 2: ground-plane grid + sphere
 //     == 3: ground-plane grid + sphere + 3rd shape, etc.
 
+    // calling num base on settings could lead to int
+    if (typeof(num) == "string") num = parseInt(num);
+
     if (num == undefined) num = 0;   // (in case setScene() called with no arg.)
     // Set up ray-tracing camera to use all the same camera parameters that
     // determine the WebGL preview.  GUIbox fcns can change these, so be sure
@@ -307,6 +310,7 @@ CScene.prototype.initScene = function (num) {
     this.item.length = 0;
     var iNow = 0;         // index of the last CGeom object put into item[] array
 
+    console.log('initializing SCENE ', num);
     // set up new scene:
     switch (num) {
         case 0:     // (default scene number; must create a 3D scene for ray-tracing
@@ -324,7 +328,6 @@ CScene.prototype.initScene = function (num) {
             //-----Disk 1------           
             this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
             iNow = this.item.length - 1;                 // get its array index.
-//      console.log('iNow should be 1; it is:', iNow);
             // set up distinctive coloring:
 
             vec4.set(this.item[iNow].gapColor, 0.165, 0.11, 0.055, 1.0);  //
@@ -436,8 +439,51 @@ CScene.prototype.initScene = function (num) {
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
 
-
             //
+            break;
+        case 3:
+            // Set default sky color:
+            this.skyColor = vec4.fromValues(0.1, 0.1, 0.1, 1.0);  // cyan/bright blue
+            
+            //---Ground Plane-----
+            // draw this in world-space; no transforms!
+            this.item.push(new CGeom(RT_GNDPLANE));   // Append gnd-plane to item[] array
+            iNow = this.item.length - 1;               // get its array index.
+                                                       // use default colors.
+                                                       // no transforms needed.
+            vec4.set(this.item[iNow].lineColor, 0.05, 0.05, 0.05, 1.0); // 
+            vec4.set(this.item[iNow].gapColor, 0.95, 0.95, 0.95, 1.0);  // 
+
+            //-----Sphere 1-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(1.2, -1.2, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+            
+            //-----Sphere 2-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(0, 1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+            
+            //-----Sphere 3-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(-1.5, -0.8, 1);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+            
             break;
         default:    // nonsensical 'sceneNum' value?
             console.log("JT_tracer0-Scene file: CScene.initScene(", num, ") NOT YET IMPLEMENTED.");

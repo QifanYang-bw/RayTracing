@@ -1,9 +1,4 @@
 CScene.prototype.traceRayColor = function (depth, eyeRay, ignoredGeom = null) {
-
-    if (printed2 < 10 && depth == 1){
-        console.log("ray2 sample :", eyeRay);
-        printed2++;
-    }
         
     // if (printed < 10 && depth == 0){
     //     console.log("ray sample :", eyeRay);
@@ -82,6 +77,8 @@ CScene.prototype.findShade = function (depth, hit) {
         // Has material
         
         // Phong Shader
+
+        var color3d = vec3.create(); // floating-point RGB color value
         
         var ambient = vec3.create();
         var diffuse = vec3.create();
@@ -90,13 +87,14 @@ CScene.prototype.findShade = function (depth, hit) {
         var lamp, localShadowFlag;
         
         for (var i = 0; i < globalLightCount; i++) {
+            if (!hit.hitGeom.mat.allowLight) continue;
+
             lamp = globalLightList[i];
             if (!lamp.isLit) continue; 
             
             // =============================================================
             // Calculate Light Direction and Reflect Direction for multiple uses
 
-            var color3d = vec3.create(); // floating-point RGB color value
             
             var t = vec3.create();
 
@@ -154,10 +152,11 @@ CScene.prototype.findShade = function (depth, hit) {
         // Reflection is calculated regardless of lighting status
 
         if (hit.hitGeom.mat.allowReflect && depth < settings.TraceDepth) {
-            var C2, reflectDirection;
+            var C2 = vec3.create();
+            var reflectDirection = vec3.create();
 
-            vec3.scale(C2, hit.surfNorm, vec3.dot(eyeDirection, hit.surfNorm) * 2);
-            vec3.sub(reflectDirection, C2, eyeDirection);
+            vec3.scale(C2, hit.surfNorm, vec3.dot(hit.viewN, hit.surfNorm) * 2);
+            vec3.sub(reflectDirection, C2, hit.viewN);
 
             var reflectRay = new CRay();   
             vec4.copy(reflectRay.orig, hit.hitPt);   // memory-to-memory copy.

@@ -33,6 +33,8 @@ var MATL_TURQUOISE =     22;
 
 var MATL_SILVER_SHINY_REFLECT =  23;
 var MATL_COPPER_SHINY_REFLECT =  24;
+var MATL_FULL_REFLECT =  25;
+
 
 
 var MATL_DEFAULT =       0; // (used for unrecognized material names)
@@ -52,7 +54,7 @@ function CMaterial(opt_Matl) {
 	this.shiny = 0.0;
 	
 	this.allowReflect = false;
-	this.reflectRatio = 0.;
+	this.allowLight = true;
 	
 
 	// THEN: ?Did the user specified a valid material?
@@ -172,7 +174,6 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.name = "MATL_COPPER_SHINY_REFLECT";
 			
 			this.allowReflect = true;
-			// this.reflectRatio = 0.4;
 			
 			break;
 		case MATL_GOLD_DULL:
@@ -224,7 +225,6 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.name = "MATL_SILVER_SHINY_REFLECT";
 			
 			this.allowReflect = true;
-			// this.reflectRatio = 0.4;
 			
 			break;
 		case MATL_EMERALD:
@@ -274,6 +274,18 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			vec4.set(this.spec,  0.297254, 0.30829,  0.306678, 0.8);   
 			this.shiny = 12.8;
 			this.name = "MATL_TURQUOISE";
+			break;
+		case MATL_FULL_REFLECT:
+			vec4.set(this.emit,  0.0,      0.0,      0.0,      1.0);
+			vec4.set(this.ambi,  0.0,      0.0,      0.0,      1.0);
+			vec4.set(this.diff,  0.0,      0.0,      0.0,      1.0);
+			vec4.set(this.spec,  1.0,      1.0,      1.0,      1.0);
+			this.shiny = 0;
+			this.name = "MATL_FULL_REFLECT";
+			
+			this.allowReflect = true;
+			this.allowLight = false;
+			
 			break;
 		default:
 			// ugly featureless (emissive-only) red:
