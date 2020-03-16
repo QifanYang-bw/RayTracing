@@ -453,6 +453,7 @@ CGeom.prototype.traceDisk = function (inRay, myHit) {
     // in model space we know it's always +z,
     // but we need to TRANSFORM the normal to world-space, & re-normalize it.
     vec4.transformMat4(myHit.surfNorm, vec4.fromValues(0, 0, 1, 0), this.normal2world);
+    vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0);
     vec4.normalize(myHit.surfNorm, myHit.surfNorm);
 
     //-------------find hit-point color:----------------
@@ -770,8 +771,16 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
         for (var i = 0; i < this.item.length; i++) {
             this.item[i].traceMe(rayT, myHit);
 
-            if (myHit.hitGeom == this.item[i] && !inRay.isShadowRay) {
+            if (myHit.hitGeom == this.item[i]) {
+                // ***IF*** you're tracing a shadow ray you can stop right here: we know
+                // that this ray's path to the light-source is blocked by this CGeom object.
+                
+                if (inRay.isShadowRay) {
+                    return;
+                }
+
                 // Recalculate everything except modelHitPoint
+                myHit.hitGeom = this;      // Set to us, otherwise the reflection calculation ignoredGeom goes wrong
 
                 vec4.scaleAndAdd(myHit.hitPt, inRay.orig, inRay.dir, myHit.t0);
                 // set 'viewN' member to the reversed, normalized inRay.dir vector:
@@ -782,9 +791,14 @@ CGeom.prototype.traceCyl = function (inRay, myHit) {
 
                 // translate surfNorm once more
                 vec4.transformMat4(myHit.surfNorm, myHit.surfNorm, this.normal2world);
-                vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0)
+                vec4.set(myHit.surfNorm, myHit.surfNorm[0], myHit.surfNorm[1], myHit.surfNorm[2], 0);
 
                 vec4.normalize(myHit.surfNorm, myHit.surfNorm);
+
+                // if (printed < 10){
+                //     console.log("2nd transform sample :", myHit.viewN, myHit.surfNorm);
+                //     printed++;
+                // }
             }
         }
 

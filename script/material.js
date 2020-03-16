@@ -33,7 +33,9 @@ var MATL_TURQUOISE =     22;
 
 var MATL_SILVER_SHINY_REFLECT =  23;
 var MATL_COPPER_SHINY_REFLECT =  24;
-var MATL_FULL_REFLECT =  25;
+var MATL_FULL_REFLECT =          25;
+var MATL_JADE_REFLECT =          26;
+var MATL_GOLD_SHINY_REFLECT =    27;
 
 
 
@@ -58,7 +60,7 @@ function CMaterial(opt_Matl) {
 	
 
 	// THEN: ?Did the user specified a valid material?
-	if(		opt_Matl && opt_Matl >=0)	{		
+	if(	opt_Matl && opt_Matl >=0)	{		
 		this.setMatl(opt_Matl);			// YES! set the reflectance values (xx)
 	}
 
@@ -192,6 +194,17 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			this.shiny = 83.2;
 			this.name = "MATL_GOLD_SHINY";
 			break;
+		case MATL_GOLD_SHINY_REFLECT:
+			vec4.set(this.emit, 0.0,      0.0,      0.0,      1.0);
+			vec4.set(this.ambi,  0.24725,  0.2245,   0.0645,   1.0);
+			vec4.set(this.diff,  0.34615,  0.3143,   0.0903,   1.0);
+			vec4.set(this.spec,  0.797357, 0.723991, 0.208006, 1.0);  
+			this.shiny = 83.2;
+			this.name = "MATL_GOLD_SHINY_REFLECT";
+
+			this.allowReflect = true;
+
+			break;
 		case MATL_PEWTER:
 			vec4.set(this.emit, 0.0,      0.0,      0.0,      1.0);
 			vec4.set(this.ambi,  0.105882, 0.058824, 0.113725, 1.0);
@@ -242,6 +255,16 @@ CMaterial.prototype.setMatl = function(nuMatl) {
 			vec4.set(this.spec,  0.316228, 0.316228, 0.316228, 0.95);   
 			this.shiny = 12.8;
 			this.name = "MATL_JADE";
+			break;
+		case MATL_JADE_REFLECT:
+			vec4.set(this.emit, 0.0,      0.0,      0.0,      1.0);
+			vec4.set(this.ambi,  0.135,    0.2225,   0.1575,   0.95);
+			vec4.set(this.diff,  0.54,     0.89,     0.63,     0.95);
+			vec4.set(this.spec,  0.316228, 0.316228, 0.316228, 0.95);   
+			this.shiny = 12.8;
+			this.name = "MATL_JADE";
+
+			this.allowReflect = true;
 			break;
 		case MATL_OBSIDIAN:
 			vec4.set(this.emit, 0.0,      0.0,      0.0,      1.0);

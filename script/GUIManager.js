@@ -42,7 +42,7 @@ function initGUI() {
 
     var fRender = datgui.addFolder('Rendering');
     fRender.add(settings, 'AllowShadow');
-    fRender.add(settings, 'TraceDepth', 0, 8).step(1);
+    fRender.add(settings, 'TraceDepth', 0, 16).step(1);
     
     var fSample = datgui.addFolder('Sampling');
     fSample.add(settings, 'SuperSampling');
@@ -128,12 +128,12 @@ var SettingsManager = function () {
 
     }
 
-    this.SceneSelection = 3;
+    this.SceneSelection = 2;
 
     this.AllowShadow = true;
-    this.TraceDepth = 2;
+    this.TraceDepth = 3;
     
-    this.SuperSampling = true;
+    this.SuperSampling = false;
     this.SampleSize = 2;
     this.Jitter = true;
 

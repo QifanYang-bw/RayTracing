@@ -43,7 +43,7 @@ CScene.prototype.traceShadowRay = function (shadowRay, lightSourceDist, ignoredG
 
     if (!shadowRay.isShadowRay) {
         console.log("Warning: CScene.t" +
-            "raceShadowRay does not actually trace a shadow ray\n\n");
+            "TraceShadowRay does not actually trace a shadow ray\n\n");
     }
     
     // Shadow Ray Detector saves some calculation effort
@@ -95,7 +95,6 @@ CScene.prototype.findShade = function (depth, hit) {
             // =============================================================
             // Calculate Light Direction and Reflect Direction for multiple uses
 
-            
             var t = vec3.create();
 
             var lightDirection = vec3.create();

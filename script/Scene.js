@@ -344,6 +344,8 @@ CScene.prototype.initScene = function (num) {
 
             this.item[iNow].rayScale(1.5, 1.5, 1);        // 1.5x of its size
 
+            this.item[iNow].setMaterial(MATL_BLACK_RUBBER);
+
 
             //-----Disk 2------ 
             this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
@@ -361,6 +363,8 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].rayRotate(0.75 * Math.PI, 1, 0, 0); // rot 135 on x axis to face us
             this.item[iNow].rayRotate(Math.PI / 3, 0, 0, 1);    // z-axis rotate 60deg.
 
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
+
             //-----Sphere 1-----
             this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
             iNow = this.item.length - 1;                 // get its array index.
@@ -369,7 +373,27 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].setIdent();                   // start in world coord axes
             this.item[iNow].rayTranslate(1.2, -1.0, 1.0);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_SILVER_SHINY);
+            this.item[iNow].setMaterial(MATL_GOLD_SHINY_REFLECT);
+
+            //-----Sphere 2-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(5.2, -1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_GOLD_SHINY_REFLECT);
+
+            //-----Sphere 3-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(9.2, -1.0, 1.0);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_GOLD_SHINY_REFLECT);
 
             break;
         case 1:
@@ -418,7 +442,7 @@ CScene.prototype.initScene = function (num) {
             break;
         case 2:
             // Set default sky color:
-            this.skyColor = vec4.fromValues(0.6, 0.6, 0.6, 1.0);  // cyan/bright blue
+            this.skyColor = vec4.fromValues(0.1, 0.1, 0.1, 1.0);  // cyan/bright blue
             
             //---Ground Plane-----
             // draw this in world-space; no transforms!
@@ -426,8 +450,8 @@ CScene.prototype.initScene = function (num) {
             iNow = this.item.length - 1;               // get its array index.
                                                        // use default colors.
                                                        // no transforms needed.
-            vec4.set(this.item[iNow].gapColor, 0.05, 0.05, 0.05, 1.0); // 
-            vec4.set(this.item[iNow].lineColor, 0.95, 0.95, 0.95, 1.0);  // 
+            vec4.set(this.item[iNow].lineColor, 0.05, 0.05, 0.05, 1.0); // 
+            vec4.set(this.item[iNow].gapColor, 0.95, 0.95, 0.95, 1.0);  // 
 
             //-----Cylinder 1-----
             this.item.push(new CGeom(RT_CYLINDER));       // Append sphere to item[] &
@@ -435,10 +459,57 @@ CScene.prototype.initScene = function (num) {
             // Initially leave sphere at the origin. Once you see it, then
             // move it to a more-sensible location:
             this.item[iNow].setIdent();                   // start in world coord axes
-            this.item[iNow].rayTranslate(0, 2.0, 1.2);  // move rightwards (+x),
+            this.item[iNow].rayTranslate(0, 4.0, 3.2);  // move rightwards (+x),
+            this.item[iNow].rayRotate(0.45 * Math.PI, 0, 1, 0); // rot on y axis
+            // this.item[iNow].rayScale(1, 1, 1);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
 
+            //-----Sphere 1-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(.4, 2.0, 3);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_COPPER_SHINY_REFLECT);
+            
+            //-----Sphere 2-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(6.0, 6.0, 6.0);  // move rightwards (+x),
+            this.item[iNow].rayScale(0.75, 0.75, 0.75);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_JADE_REFLECT);
+            
+            //-----Sphere 3-----
+            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+            // Initially leave sphere at the origin. Once you see it, then
+            // move it to a more-sensible location:
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(-1, -2.3, 3);  // move rightwards (+x),
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
+
+            //-----Mirror 1------           
+            this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(-6, 0, 5);        // move drawing axes 
+                                                            // RIGHT, BACK, & UP.
+            // this.item[iNow].rayRotate(0.25 * Math.PI, 1, 0, 0); // rot 45deg on x axis to face us
+            this.item[iNow].rayRotate(0.45 * Math.PI, 0, 1, 0); // x-axis rotate 45deg.
+            // this.item[iNow].rayRotate(0.3 * Math.PI, 0, 0, 1); // y-axis rotate 45deg.
+
+            this.item[iNow].rayScale(3, 3, 1);        // 3x of its size
+
+            this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
             //
             break;
         case 3:
@@ -463,26 +534,51 @@ CScene.prototype.initScene = function (num) {
             this.item[iNow].rayTranslate(1.2, -1.2, 1.0);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+
+            //-----Disk 1------           
+            this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(0, 6, 3);        // move drawing axes 
+                                                            // RIGHT, BACK, & UP.
+            // this.item[iNow].rayRotate(0.25 * Math.PI, 1, 0, 0); // rot 45deg on x axis to face us
+            this.item[iNow].rayRotate(0.505 * Math.PI, 1, 0, 0); // x-axis rotate 45deg.
+            // this.item[iNow].rayRotate(0.3 * Math.PI, 0, 0, 1); // y-axis rotate 45deg.
+
+            this.item[iNow].rayScale(3, 3, 1);        // 3x of its size
+
+            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+            // this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
+
+            //-----Disk 2------           
+            this.item.push(new CGeom(RT_DISK));         // Append 2D disk to item[] &
+            iNow = this.item.length - 1;                 // get its array index.
+
+            this.item[iNow].setIdent();                   // start in world coord axes
+            this.item[iNow].rayTranslate(0, -12, 3);        // move drawing axes 
+                                                            // RIGHT, BACK, & UP.
+            // this.item[iNow].rayRotate(0.25 * Math.PI, 1, 0, 0); // rot 45deg on x axis to face us
+            this.item[iNow].rayRotate(0.495 * Math.PI, 1, 0, 0); // x-axis rotate 45deg.
+            // this.item[iNow].rayRotate(0.3 * Math.PI, 0, 0, 1); // y-axis rotate 45deg.
+
+            this.item[iNow].rayScale(3, 3, 1);        // 3x of its size
+
+            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
+            // this.item[iNow].setMaterial(MATL_SILVER_SHINY_REFLECT);
             
-            //-----Sphere 2-----
-            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
+            //-----Cylinder 1-----
+            this.item.push(new CGeom(RT_CYLINDER));       // Append sphere to item[] &
             iNow = this.item.length - 1;                 // get its array index.
             // Initially leave sphere at the origin. Once you see it, then
             // move it to a more-sensible location:
             this.item[iNow].setIdent();                   // start in world coord axes
-            this.item[iNow].rayTranslate(0, 1.0, 1.0);  // move rightwards (+x),
+            this.item[iNow].rayTranslate(-1.6, -1, 1);  // move rightwards (+x),
+            this.item[iNow].rayRotate(0.45 * Math.PI, 0, 1, 0); // rot on y axis
+            this.item[iNow].rayScale(0.8, 0.8, 0.6);  // move rightwards (+x),
 
             this.item[iNow].setMaterial(MATL_FULL_REFLECT);
-            
-            //-----Sphere 3-----
-            this.item.push(new CGeom(RT_SPHERE));       // Append sphere to item[] &
-            iNow = this.item.length - 1;                 // get its array index.
-            // Initially leave sphere at the origin. Once you see it, then
-            // move it to a more-sensible location:
-            this.item[iNow].setIdent();                   // start in world coord axes
-            this.item[iNow].rayTranslate(-1.5, -0.8, 1);  // move rightwards (+x),
 
-            this.item[iNow].setMaterial(MATL_FULL_REFLECT);
             
             break;
         default:    // nonsensical 'sceneNum' value?
