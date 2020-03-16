@@ -59,25 +59,25 @@ function initGUI() {
 
 
         cur = fLamps[i].add(thisLight, 'isLit');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
 
         cur = fLamps[i].add(thisLight, 'x');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
         
         cur = fLamps[i].add(thisLight, 'y');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
         
         cur = fLamps[i].add(thisLight, 'z');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
         
         cur = fLamps[i].addColor(thisLight, 'ambient');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
         
         cur = fLamps[i].addColor(thisLight, 'diffusal');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
         
         cur = fLamps[i].addColor(thisLight, 'specular');
-        cur.onFinishChange(function(value) {this.object.apply();});
+        cur.onChange(function(value) {this.object.apply();});
     }
 
     fScene.open();

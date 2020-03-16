@@ -10,6 +10,8 @@ VboBoxScene0.prototype.draw = function () {
 //=============================================================================
 // Render current VBObox contents.
 
+    VboBoxPrev.prototype.draw.apply(this, arguments);
+
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
         console.log('ERROR! before' + this.constructor.name +
@@ -133,6 +135,8 @@ VboBoxScene1.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
 
+    VboBoxPrev.prototype.draw.apply(this, arguments);
+
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
         console.log('ERROR! before' + this.constructor.name +
@@ -221,6 +225,8 @@ VboBoxScene2.prototype.constructor = VboBoxScene1;
 VboBoxScene2.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
+
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
@@ -334,6 +340,8 @@ VboBoxScene3.prototype.constructor = VboBoxScene1;
 VboBoxScene3.prototype.draw = function() {
 //=============================================================================
 // Render current VBObox contents.
+
+    VboBoxPrev.prototype.draw.apply(this, arguments);
 
     // check: was WebGL context set to use our VBO & shader program?
     if (this.isReady() == false) {
